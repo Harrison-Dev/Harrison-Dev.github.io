@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    
+    <title>UniAvatar - 簡易Unity對話系統 (操作篇) | Haox Land</title>
+
+    <meta name="description" content="&lt;p&gt;Demo畫面鎮樓&lt;br&gt;&lt;img src=&#34;/img/UniAvatar/Result.png&#34; alt=&#34;Result&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;簡介&#34;&gt;&lt;a href=&#34;#簡介&#34; class=&#34;headerlink&#34; title=&#34;簡介&#34;&gt;&lt;/a&gt;簡介&lt;/h2&gt;&lt;p&gt;UniAvatar是一個使用Unity製作的簡易對話系統，與文字冒險遊戲的範例。&lt;/p&gt;
+&lt;p&gt;專案所撰寫的程式碼均開放原始碼，且遵守MIT Lincense，但專案中的ADV實作部分有參考使用其他專案，使用時請參考各自的開放協議。&lt;/p&gt;
+&lt;p&gt;感謝&lt;a href=&#34;https://www.facebook.com/ArmeIllust&#34;&gt;ArmeCyan&lt;/a&gt;提供立繪與UI的支援，如果喜歡他的畫風請去粉專支持。&lt;/p&gt;
+&lt;p&gt;Repository連結：&lt;a href=&#34;https://github.com/Harrison-Dev/UniAvatar&#34;&gt;https://github.com/Harrison-Dev/UniAvatar&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;範例連結: &lt;a href=&#34;#example&#34;&gt;點我&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;如果有任何希望追加的功能，歡迎在repo中發issue或是PR協助專案變得更完整！&lt;/p&gt;">
+    <meta name="keywords" content="">
+
+    
+
+    <meta property="og:locale" content="en" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content= "UniAvatar - 簡易Unity對話系統 (操作篇) | Haox Land"  />
+    <meta property="og:description" content= "&lt;p&gt;Demo畫面鎮樓&lt;br&gt;&lt;img src=&#34;/img/UniAvatar/Result.png&#34; alt=&#34;Result&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;簡介&#34;&gt;&lt;a href=&#34;#簡介&#34; class=&#34;headerlink&#34; title=&#34;簡介&#34;&gt;&lt;/a&gt;簡介&lt;/h2&gt;&lt;p&gt;UniAvatar是一個使用Unity製作的簡易對話系統，與文字冒險遊戲的範例。&lt;/p&gt;
+&lt;p&gt;專案所撰寫的程式碼均開放原始碼，且遵守MIT Lincense，但專案中的ADV實作部分有參考使用其他專案，使用時請參考各自的開放協議。&lt;/p&gt;
+&lt;p&gt;感謝&lt;a href=&#34;https://www.facebook.com/ArmeIllust&#34;&gt;ArmeCyan&lt;/a&gt;提供立繪與UI的支援，如果喜歡他的畫風請去粉專支持。&lt;/p&gt;
+&lt;p&gt;Repository連結：&lt;a href=&#34;https://github.com/Harrison-Dev/UniAvatar&#34;&gt;https://github.com/Harrison-Dev/UniAvatar&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;範例連結: &lt;a href=&#34;#example&#34;&gt;點我&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;如果有任何希望追加的功能，歡迎在repo中發issue或是PR協助專案變得更完整！&lt;/p&gt;" />
+    <meta property="og:url" content="http://yoursite.com/2020/04/18/Game%20Implementations/UniAvatar_Intro/index.html" />
+    <meta property="og:site_name" content="" />
+    <meta property="article:author" content="Harrison Chen" />
+    <meta property="article:publisher" content="" />
+    <meta property="og:description" content="&lt;p&gt;Demo畫面鎮樓&lt;br&gt;&lt;img src=&#34;/img/UniAvatar/Result.png&#34; alt=&#34;Result&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;簡介&#34;&gt;&lt;a href=&#34;#簡介&#34; class=&#34;headerlink&#34; title=&#34;簡介&#34;&gt;&lt;/a&gt;簡介&lt;/h2&gt;&lt;p&gt;UniAvatar是一個使用Unity製作的簡易對話系統，與文字冒險遊戲的範例。&lt;/p&gt;
+&lt;p&gt;專案所撰寫的程式碼均開放原始碼，且遵守MIT Lincense，但專案中的ADV實作部分有參考使用其他專案，使用時請參考各自的開放協議。&lt;/p&gt;
+&lt;p&gt;感謝&lt;a href=&#34;https://www.facebook.com/ArmeIllust&#34;&gt;ArmeCyan&lt;/a&gt;提供立繪與UI的支援，如果喜歡他的畫風請去粉專支持。&lt;/p&gt;
+&lt;p&gt;Repository連結：&lt;a href=&#34;https://github.com/Harrison-Dev/UniAvatar&#34;&gt;https://github.com/Harrison-Dev/UniAvatar&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;範例連結: &lt;a href=&#34;#example&#34;&gt;點我&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;如果有任何希望追加的功能，歡迎在repo中發issue或是PR協助專案變得更完整！&lt;/p&gt;" />
+    <meta name="twitter:title" content="UniAvatar - 簡易Unity對話系統 (操作篇) | Haox Land"/>
+    <meta name="twitter:description" content="&lt;p&gt;Demo畫面鎮樓&lt;br&gt;&lt;img src=&#34;/img/UniAvatar/Result.png&#34; alt=&#34;Result&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;簡介&#34;&gt;&lt;a href=&#34;#簡介&#34; class=&#34;headerlink&#34; title=&#34;簡介&#34;&gt;&lt;/a&gt;簡介&lt;/h2&gt;&lt;p&gt;UniAvatar是一個使用Unity製作的簡易對話系統，與文字冒險遊戲的範例。&lt;/p&gt;
+&lt;p&gt;專案所撰寫的程式碼均開放原始碼，且遵守MIT Lincense，但專案中的ADV實作部分有參考使用其他專案，使用時請參考各自的開放協議。&lt;/p&gt;
+&lt;p&gt;感謝&lt;a href=&#34;https://www.facebook.com/ArmeIllust&#34;&gt;ArmeCyan&lt;/a&gt;提供立繪與UI的支援，如果喜歡他的畫風請去粉專支持。&lt;/p&gt;
+&lt;p&gt;Repository連結：&lt;a href=&#34;https://github.com/Harrison-Dev/UniAvatar&#34;&gt;https://github.com/Harrison-Dev/UniAvatar&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;範例連結: &lt;a href=&#34;#example&#34;&gt;點我&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;如果有任何希望追加的功能，歡迎在repo中發issue或是PR協助專案變得更完整！&lt;/p&gt;"/>
+    <script type="application/ld+json">
+        {
+            "description": "&lt;p&gt;Demo畫面鎮樓&lt;br&gt;&lt;img src=&#34;/img/UniAvatar/Result.png&#34; alt=&#34;Result&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;簡介&#34;&gt;&lt;a href=&#34;#簡介&#34; class=&#34;headerlink&#34; title=&#34;簡介&#34;&gt;&lt;/a&gt;簡介&lt;/h2&gt;&lt;p&gt;UniAvatar是一個使用Unity製作的簡易對話系統，與文字冒險遊戲的範例。&lt;/p&gt;
+&lt;p&gt;專案所撰寫的程式碼均開放原始碼，且遵守MIT Lincense，但專案中的ADV實作部分有參考使用其他專案，使用時請參考各自的開放協議。&lt;/p&gt;
+&lt;p&gt;感謝&lt;a href=&#34;https://www.facebook.com/ArmeIllust&#34;&gt;ArmeCyan&lt;/a&gt;提供立繪與UI的支援，如果喜歡他的畫風請去粉專支持。&lt;/p&gt;
+&lt;p&gt;Repository連結：&lt;a href=&#34;https://github.com/Harrison-Dev/UniAvatar&#34;&gt;https://github.com/Harrison-Dev/UniAvatar&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;範例連結: &lt;a href=&#34;#example&#34;&gt;點我&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;如果有任何希望追加的功能，歡迎在repo中發issue或是PR協助專案變得更完整！&lt;/p&gt;",
+            "author": { "@type": "Person", "name": "Harrison Chen" },
+            "@type": "BlogPosting",
+            "url": "http://yoursite.com/2020/04/18/Game%20Implementations/UniAvatar_Intro/index.html",
+            "publisher": {
+            "@type": "Organization",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "http://yoursite.comundefined"
+            },
+            "name": "Harrison Chen"
+            },
+            "headline": "UniAvatar - 簡易Unity對話系統 (操作篇) | Haox Land",
+            "datePublished": "2020-04-18T14:00:00.000Z",
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": "http://yoursite.com/2020/04/18/Game%20Implementations/UniAvatar_Intro/index.html"
+            },
+            "@context": "http://schema.org"
+        }
+    </script>
+
+
+
+
+    
+
+    
+
+    
+
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+
+    
+
+    
+
+    
+
+    
+<link rel="stylesheet" href="/dist/build.css?v=1654266144177.css">
+
+
+    
+<link rel="stylesheet" href="/dist/custom.css?v=1654266144177.css">
+
+
+    <script>
+        window.isPost = true
+        window.aomori = {
+            
+            
+            
+        }
+        window.aomori_logo_typed_animated = true
+        window.aomori_search_algolia = false
+
+    </script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+<body>
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+    <header class="header">
+        <div class="header-type">
+            
+            <div class="header-type-inner">
+                
+                    <div id="typed-strings" style="display:none">
+                        <p>Haox Land</p>
+                    </div>
+                    <a class="header-type-title" id="typed" href="/"></a>
+                
+    
+                
+            </div>
+        </div>
+        <div class="header-menu">
+            <div class="header-menu-inner">
+                
+                <a href="/">Home</a>
+                
+                <a href="/About">About</a>
+                
+            </div>
+            <div class="header-menu-social">
+                
+    <a class="social" target="_blank" href="https://github.com/Harrison-Dev">
+        <ion-icon name="logo-github"></ion-icon>
+    </a>
+
+    <a class="social" target="_blank" href="https://www.linkedin.com/in/harrison-chen-tw">
+        <ion-icon name="logo-linkedin"></ion-icon>
+    </a>
+
+    <a class="social" target="_blank" href="https://twitter.com/HaoCooLLL">
+        <ion-icon name="logo-twitter"></ion-icon>
+    </a>
+
+            </div>
+        </div>
+
+        <div class="header-menu-mobile">
+            <div class="header-menu-mobile-inner" id="mobile-menu-open">
+                <i class="icon icon-menu"></i>
+            </div>
+        </div>
+    </header>
+
+    <div class="header-menu-mobile-menu">
+        <div class="header-menu-mobile-menu-bg"></div>
+        <div class="header-menu-mobile-menu-wrap">
+            <div class="header-menu-mobile-menu-inner">
+                <div class="header-menu-mobile-menu-close" id="mobile-menu-close">
+                    <i class="icon icon-cross"></i>
+                </div>
+                <div class="header-menu-mobile-menu-list">
+                    
+                    <a href="/">Home</a>
+                    
+                    <a href="/About">About</a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+    <div class="container">
+        <div class="main">
+            <section class="inner">
+                <section class="inner-main">
+                    <div class="post">
+    <article id="post-cm2wy5rvf0002rloj4ug8gwkw" class="article article-type-post" itemscope
+    itemprop="blogPost">
+
+    <div class="article-inner">
+
+        
+          
+        
+        
+        
+
+        
+        <header class="article-header">
+            
+  
+    <h1 class="article-title" itemprop="name">
+      UniAvatar - 簡易Unity對話系統 (操作篇)
+    </h1>
+  
+
+        </header>
+        
+
+        <div class="article-more-info article-more-info-post hairline">
+
+            <div class="article-date">
+  <time datetime="2020-04-18T14:00:00.000Z" itemprop="datePublished">2020-04-18</time>
+</div>
+
+            
+            <div class="article-category">
+                <a class="article-category-link" href="/categories/Game-Implementations/">Game Implementations</a>
+            </div>
+            
+
+            
+            <div class="article-tag">
+                <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Basic/" rel="tag">Basic</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Camera/" rel="tag">Camera</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Fun/" rel="tag">Fun</a></li></ul>
+            </div>
+            
+
+            
+            <div class="article-busuanzi">
+                <span id="busuanzi_value_page_pv">N</span> 人看过
+            </div>
+            
+
+        </div>
+
+        <div class="article-entry post-inner-html hairline" itemprop="articleBody">
+            <p>Demo畫面鎮樓<br><img src="/img/UniAvatar/Result.png" alt="Result"></p>
+<h2 id="簡介"><a href="#簡介" class="headerlink" title="簡介"></a>簡介</h2><p>UniAvatar是一個使用Unity製作的簡易對話系統，與文字冒險遊戲的範例。</p>
+<p>專案所撰寫的程式碼均開放原始碼，且遵守MIT Lincense，但專案中的ADV實作部分有參考使用其他專案，使用時請參考各自的開放協議。</p>
+<p>感謝<a target="_blank" rel="noopener" href="https://www.facebook.com/ArmeIllust">ArmeCyan</a>提供立繪與UI的支援，如果喜歡他的畫風請去粉專支持。</p>
+<p>Repository連結：<a target="_blank" rel="noopener" href="https://github.com/Harrison-Dev/UniAvatar">https://github.com/Harrison-Dev/UniAvatar</a></p>
+<p>範例連結: <a href="#example">點我</a></p>
+<p>如果有任何希望追加的功能，歡迎在repo中發issue或是PR協助專案變得更完整！</p>
+<span id="more"></span>
+<h2 id="操作說明"><a href="#操作說明" class="headerlink" title="操作說明"></a>操作說明</h2><p>目前Repo上的版本是以Text mesh pro為主進行設定的，所以這次的操作步驟也會是以TMPro為主。</p>
+<p>如果想使用一般UGUI Text，可以在Player Setting中，將TMP_SUPPORT Define拿掉即可。</p>
+<p><img src="/img/UniAvatar/TMPConfig.png" alt="TMPCONFIG"></p>
+<h3 id="場景架構"><a href="#場景架構" class="headerlink" title="場景架構"></a>場景架構</h3><p>打開專案後，首先要打開範例場景<strong>TextMeshProExample</strong>。</p>
+<p>打開範例場景<strong>TextMeshProExample</strong>之後，可以看到場景是由一個Canvas作為主要組成，<br>在Canvas最底下的是Controller們，這部分會在之後的實作細節文章中再仔細提到。</p>
+<p><img src="/img/UniAvatar/Hierarchy.png" alt="Hierarchy"></p>
+<p>稍微簡單介紹UGUI中的架構，主要分為背景(背景圖片與物件)、中景(人物與相對應互動)、前景(對話框等UI物件)，最前方是操作時會點選的Panel物件與選項框物件。</p>
+<p>可以透過調整下方的人物圖片、UI圖片等，來製作屬於自己的ADV遊戲。</p>
+<p><strong>注意：</strong>如果調整名字時，記得在Animation Manager中調整Animation Target對應的Key，以免動畫沒辦法正確對應</p>
+<p><img src="/img/UniAvatar/AnimationManager.png" alt="AnimationManager"></p>
+<p>關於動畫等系統詳細的介紹，會在之後的文章中慢慢補上。</p>
+<p>介紹完外觀上的架構後，讓我先來介紹一下對話內容的設定吧。</p>
+<h3 id="對話設定"><a href="#對話設定" class="headerlink" title="對話設定"></a>對話設定</h3><p>這個專案參考了許多的文字冒險遊戲設定方法，最後決定以試算表作為文本設定的方式進行編輯。</p>
+<p>可以參考 <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/12jt6i-AYNEEpmP4Ztsfl6Bu7DbvRMB3_hHdfH_TdSyQ/edit#gid=216373703">範例所使用的文本</a> 中所使用的格式。</p>
+<p>也可以自由將這份文件自己複製一份，方便自己編輯劇情文本。</p>
+<p>第一頁列出目前所實作的Action的種類，以及其對應的參數，這個設定檔算是紀錄目前的功能以及與企劃同步資訊用的，不會實際讀進遊戲中。</p>
+<p><img src="/img/UniAvatar/sheet1.png" alt="Sheet1"></p>
+<p>可以看到目前實作了對話、動畫、選項、分支四大類別。</p>
+<p>在第二頁中，可以看到透過前述的這些分類設定了範例的對話內容：</p>
+<p><img src="/img/UniAvatar/sheet2.png" alt="Sheet2"></p>
+<p>其中的參數意義，請參考第一頁所列出的內容。</p>
+<p>大家可能注意到了，其中第一頁不管是名字，或是對話內容都有個<strong>Key</strong>在結尾出現。</p>
+<p>這是因為這個系統也製作了簡單的翻譯用文字表格：</p>
+<p><img src="/img/UniAvatar/sheet3.png" alt="Sheet3"></p>
+<p>目前只是使用Google Spreadsheet的內建Google Translate，請大家不要太在意翻譯品質。</p>
+<p>第一行的Key為了在劇情表中可以一眼看出對話內容，目前暫時使用整句中文語句作為主要key，可以依照實際翻譯所需進行調整。</p>
+<p><img src="/img/UniAvatar/sheet4.png" alt="Sheet4"></p>
+<p>最後一個列表是遊戲中的變數們，實際使用的時候只會用到第一列的值，後面只是方便記錄這個變數實際上的作用。</p>
+<h2 id="將對話設定匯入引擎的步驟"><a href="#將對話設定匯入引擎的步驟" class="headerlink" title="將對話設定匯入引擎的步驟"></a>將對話設定匯入引擎的步驟</h2><p>這一個段落會敘述如何將上述的劇情與文本等文件，匯入到Unity引擎中使用。</p>
+<p>首先將前面的試算表點選 檔案 [→] 下載 [→] 逗號分隔值檔案</p>
+<p>將ActionSetting, Words, Flag 三個檔案都下載下來</p>
+<p><img src="/img/UniAvatar/Download.png" alt="DL"></p>
+<p>將下載出來的檔案覆蓋下面資料夾中的三個檔案</p>
+<p><img src="/img/UniAvatar/SettingPath.png" alt="SettingPath"></p>
+<p>檔案覆蓋後，回到上一層的目錄</p>
+<p><img src="/img/UniAvatar/SettingAssetPath.png" alt="SettingAssetPath"></p>
+<p>將三個目錄最上面的按鈕都點選重新讀檔，就可以將新的文本覆蓋了！</p>
+<p><img src="/img/UniAvatar/ApplySetting.png" alt="ApplySetting"></p>
+<p>最後，因為這個範例是使用Text Mesh Pro進行製作，所以要更新Text Atlas</p>
+<p>首先點選這個資料夾中的SDF檔案<br><img src="/img/UniAvatar/FontPath.png" alt="FontPath"></p>
+<p>在Inspector中點選Update Atlas<br><img src="/img/UniAvatar/UpdateAtlas.png" alt="UpdateAtlas"></p>
+<p>跳出Text Mesh Pro視窗後，接著將選單選擇到From File<br><img src="/img/UniAvatar/FromFile.png" alt="FromFile"></p>
+<p>最後按下Generate，最後按下Save就可以將Text Atlas更新了<br><img src="/img/UniAvatar/GenerateAndSave.png" alt="GenerateAndSave"></p>
+<p>接下來回到場景執行，就是更新後的文本了！<br><img src="/img/UniAvatar/Result.png" alt="Result"></p>
+<p><a name="example"></a></p>
+<h2 id="遊戲範例"><a href="#遊戲範例" class="headerlink" title="遊戲範例"></a>遊戲範例</h2><p><a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/12jt6i-AYNEEpmP4Ztsfl6Bu7DbvRMB3_hHdfH_TdSyQ/edit#gid=216373703">範例所使用的文本</a></p>
+<p>※這個範例與試算表的文本是直接同步的，但是目前公開的Repo並沒有包含下載功能。</p>
+<div id="wrap">
+<iframe id="bi_iframe" src="https://harrison-dev.github.io/demos/UniAvatarDemo/"  frameborder="0" scrolling="no" allowfullscreen height=480 width=800> 
+</iframe>
+</div>
+
+<!-- <script>
+    function adjustIFrame()
+    {
+        var ifm = document.getElementById("bi_iframe");
+        ifm.height = document.documentElement.clientHeight;
+        ifm.width = document.documentElement.clientWidth;
+    }
+</script> -->
+<h2 id="相關文章-陸續更新"><a href="#相關文章-陸續更新" class="headerlink" title="相關文章 (陸續更新)"></a>相關文章 (陸續更新)</h2><ol>
+<li>操作介紹</li>
+<li>故事主控器介紹</li>
+<li>動畫主控器介紹</li>
+<li>多語言實作介紹</li>
+<li>讀取設定檔介紹</li>
+</ol>
+
+        </div>
+
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+<nav class="article-nav">
+  
+    <a href="/2020/04/25/Game%20Physics/Physics%20Constraint/" id="article-nav-newer" class="article-nav-link-wrap">
+      <div class="article-nav-caption">下一篇</div>
+      <div class="article-nav-title">
+        
+          Game Physics - Constraint
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/02/25/Game%20Physics/2D%20Collision%20Detection/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-caption">上一篇</div>
+      <div class="article-nav-title">2D Collision Study</div>
+    </a>
+  
+</nav>
+
+
+    <section class="share">
+        <div class="share-title">分享</div>
+        <a class="share-item" target="_blank"
+            href="https://twitter.com/share?text=UniAvatar - 簡易Unity對話系統 (操作篇) - Haox Land&url=http%3A%2F%2Fyoursite.com%2F2020%2F04%2F18%2FGame%2520Implementations%2FUniAvatar_Intro%2F">
+            <ion-icon name="logo-twitter"></ion-icon>
+        </a>
+        <a class="share-item" target="_blank"
+            href="https://www.facebook.com/sharer.php?title=UniAvatar - 簡易Unity對話系統 (操作篇) - Haox Land&u=http%3A%2F%2Fyoursite.com%2F2020%2F04%2F18%2FGame%2520Implementations%2FUniAvatar_Intro%2F">
+            <ion-icon name="logo-facebook"></ion-icon>
+        </a>
+        <!-- <a class="share-item" target="_blank"
+            href="https://service.weibo.com/share/share.php?title=UniAvatar - 簡易Unity對話系統 (操作篇) - Haox Land&url=http://yoursite.com/2020/04/18/Game%20Implementations/UniAvatar_Intro/&pic=">
+            <div class="n-icon n-icon-weibo"></div>
+        </a> -->
+    </section>
+
+</article>
+
+
+
+
+<section class="comments comments-disqus">
+    <div id="disqus_thread"></div>
+    <script>
+        ;(function () {
+            // DON'T EDIT BELOW THIS LINE
+            var d = document,
+                s = d.createElement('script')
+            s.src =
+                'https://harrison0628.disqus.com/embed.js'
+            s.setAttribute('data-timestamp', +new Date())
+            ;(d.head || d.body).appendChild(s)
+        })()
+    </script>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</div>
+                </section>
+            </section>
+
+            
+            <aside class="sidebar ">
+                
+
+
+<div class="widget" id="widget">
+    
+      
+  <div class="widget-wrap">
+    <div class="widget-inner">
+      <div class="toc post-toc-html"></div>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget-wrap widget-cate">
+    <div class="widget-title"><span>Categories</span></div>
+    <div class="widget-inner">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Game-Implementations/">Game Implementations</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Game-Mathematics/">Game Mathematics</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Game-Physics/">Game Physics</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Game-Programming/">Game Programming</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Unity/">Unity</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/travel/">travel</a></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget-wrap widget-tags">
+    <div class="widget-title"><span>Tags</span></div>
+    <div class="widget-inner">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Basic/" rel="tag">Basic</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-Programming-Language/" rel="tag">C# Programming Language</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Camera/" rel="tag">Camera</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Computer-Orgnization/" rel="tag">Computer Orgnization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Data-Structure/" rel="tag">Data Structure</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fun/" rel="tag">Fun</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Game-Math/" rel="tag">Game Math</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Game-Physics/" rel="tag">Game Physics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Memory-Management/" rel="tag">Memory Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Operating-System/" rel="tag">Operating System</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Programming-Tips/" rel="tag">Programming Tips</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Unity/" rel="tag">Unity</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/game-development/" rel="tag">game development</a></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget-wrap widget-recent-posts">
+    <div class="widget-title"><span>Recent Posts</span></div>
+    <div class="widget-inner">
+      <ul>
+        
+          <li>
+            <a href="/2023/09/10/Travel/%E4%BA%AC%E9%83%BDBitSummit%E9%81%8A%E8%A8%98%20%EF%BC%88%E5%89%8D%E5%8D%8A%EF%BC%89/">京都BitSummit遊記 （前半）</a>
+          </li>
+        
+          <li>
+            <a href="/2022/07/27/Game%20Programming/Fiber%20Job%20System/">Fiber based job system</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/05/Unity/UniTask/">UniTask：利用async/await優雅的撰寫callback</a>
+          </li>
+        
+          <li>
+            <a href="/2020/04/25/Game%20Physics/Physics%20Constraint/">Game Physics - Constraint</a>
+          </li>
+        
+          <li>
+            <a href="/2020/04/18/Game%20Implementations/UniAvatar_Intro/">UniAvatar - 簡易Unity對話系統 (操作篇)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget-wrap widget-archive">
+    <div class="widget-title"><span>Archive</span></div>
+    <div class="widget-inner">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/">2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/">2018</a></li></ul>
+    </div>
+  </div>
+
+
+    
+</div>
+
+<div id="backtop"><i class="icon icon-arrow-up"></i></div>
+            </aside>
+            
+        </div>
+    </div>
+
+    <footer class="footer">
+    <div class="footer-wave">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#3c4859" fill-opacity="1" d="M0,160L60,181.3C120,203,240,245,360,240C480,235,600,181,720,186.7C840,192,960,256,1080,261.3C1200,267,1320,213,1380,186.7L1440,160L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path></svg>
+    </div>
+
+    <!-- Please do not remove this -->
+    <!-- 开源不易，请勿删除 -->
+    <div class="footer-wrap">
+        <div class="footer-inner"> 
+            Haox Land &copy; 2024<br>
+            Powered By Hexo · Theme By <a href="https://linhong.me/" target="_blank">Aomori</a> · <a href="https://github.com/lh1me/hexo-theme-aomori" target="_blank">Github</a>
+        </div>
+    </div>
+
+</footer>
+
+<script type="module" src="https://unpkg.com/ionicons@6.0.2/dist/ionicons/ionicons.esm.js"></script>
+
+
+
+
+
+
+<script src="/dist/build.js?1654266144177.js"></script>
+
+
+<script src="/dist/custom.js?1654266144177.js"></script>
+
+
+
+
+
+<!-- Google Analytics-->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-K056ZHDF24"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-K056ZHDF24');
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+
+
+
+
+
+</body>
+
+</html>
