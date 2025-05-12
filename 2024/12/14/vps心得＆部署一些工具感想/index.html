@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    
+    <title>vps心得＆部署一些工具感想 | Haox Land</title>
+
+    <meta name="description" content="&lt;p&gt;&lt;br/&gt;&lt;/p&gt;
+&lt;p&gt;最近因為朋友的surfshark到期了，加上自己想獲得一個連線到日本的節點，以及希望有一個public ip可以拿來建立一些web service，上網研究了一下購入了日本的VPS服務。&lt;/p&gt;
+&lt;p&gt;在一篇講馬娘如何繞過cygames的檢查的巴哈文章裡面看到了 &lt;a href=&#34;https://web.arena.ne.jp/indigo/&#34;&gt;WebArena Indigo&lt;/a&gt; ，一個月只要400多日幣就可以開一台VPS （spec如下，少的可憐 ＱＱ）對於我目前的需求來說還是蠻夠用了。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/vps心得＆部署一些工具感想/img_1.png&#34; alt=&#34;image&#34;&gt;&lt;/p&gt;">
+    <meta name="keywords" content="">
+
+    
+
+    <meta property="og:locale" content="en" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content= "vps心得＆部署一些工具感想 | Haox Land"  />
+    <meta property="og:description" content= "&lt;p&gt;&lt;br/&gt;&lt;/p&gt;
+&lt;p&gt;最近因為朋友的surfshark到期了，加上自己想獲得一個連線到日本的節點，以及希望有一個public ip可以拿來建立一些web service，上網研究了一下購入了日本的VPS服務。&lt;/p&gt;
+&lt;p&gt;在一篇講馬娘如何繞過cygames的檢查的巴哈文章裡面看到了 &lt;a href=&#34;https://web.arena.ne.jp/indigo/&#34;&gt;WebArena Indigo&lt;/a&gt; ，一個月只要400多日幣就可以開一台VPS （spec如下，少的可憐 ＱＱ）對於我目前的需求來說還是蠻夠用了。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/vps心得＆部署一些工具感想/img_1.png&#34; alt=&#34;image&#34;&gt;&lt;/p&gt;" />
+    <meta property="og:url" content="https://blog.harrison-chen.dev/2024/12/14/vps%E5%BF%83%E5%BE%97%EF%BC%86%E9%83%A8%E7%BD%B2%E4%B8%80%E4%BA%9B%E5%B7%A5%E5%85%B7%E6%84%9F%E6%83%B3/index.html" />
+    <meta property="og:site_name" content="" />
+    <meta property="article:author" content="Harrison Chen" />
+    <meta property="article:publisher" content="" />
+    <meta property="og:description" content="&lt;p&gt;&lt;br/&gt;&lt;/p&gt;
+&lt;p&gt;最近因為朋友的surfshark到期了，加上自己想獲得一個連線到日本的節點，以及希望有一個public ip可以拿來建立一些web service，上網研究了一下購入了日本的VPS服務。&lt;/p&gt;
+&lt;p&gt;在一篇講馬娘如何繞過cygames的檢查的巴哈文章裡面看到了 &lt;a href=&#34;https://web.arena.ne.jp/indigo/&#34;&gt;WebArena Indigo&lt;/a&gt; ，一個月只要400多日幣就可以開一台VPS （spec如下，少的可憐 ＱＱ）對於我目前的需求來說還是蠻夠用了。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/vps心得＆部署一些工具感想/img_1.png&#34; alt=&#34;image&#34;&gt;&lt;/p&gt;" />
+    <meta name="twitter:title" content="vps心得＆部署一些工具感想 | Haox Land"/>
+    <meta name="twitter:description" content="&lt;p&gt;&lt;br/&gt;&lt;/p&gt;
+&lt;p&gt;最近因為朋友的surfshark到期了，加上自己想獲得一個連線到日本的節點，以及希望有一個public ip可以拿來建立一些web service，上網研究了一下購入了日本的VPS服務。&lt;/p&gt;
+&lt;p&gt;在一篇講馬娘如何繞過cygames的檢查的巴哈文章裡面看到了 &lt;a href=&#34;https://web.arena.ne.jp/indigo/&#34;&gt;WebArena Indigo&lt;/a&gt; ，一個月只要400多日幣就可以開一台VPS （spec如下，少的可憐 ＱＱ）對於我目前的需求來說還是蠻夠用了。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/vps心得＆部署一些工具感想/img_1.png&#34; alt=&#34;image&#34;&gt;&lt;/p&gt;"/>
+    <script type="application/ld+json">
+        {
+            "description": "&lt;p&gt;&lt;br/&gt;&lt;/p&gt;
+&lt;p&gt;最近因為朋友的surfshark到期了，加上自己想獲得一個連線到日本的節點，以及希望有一個public ip可以拿來建立一些web service，上網研究了一下購入了日本的VPS服務。&lt;/p&gt;
+&lt;p&gt;在一篇講馬娘如何繞過cygames的檢查的巴哈文章裡面看到了 &lt;a href=&#34;https://web.arena.ne.jp/indigo/&#34;&gt;WebArena Indigo&lt;/a&gt; ，一個月只要400多日幣就可以開一台VPS （spec如下，少的可憐 ＱＱ）對於我目前的需求來說還是蠻夠用了。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/vps心得＆部署一些工具感想/img_1.png&#34; alt=&#34;image&#34;&gt;&lt;/p&gt;",
+            "author": { "@type": "Person", "name": "Harrison Chen" },
+            "@type": "BlogPosting",
+            "url": "https://blog.harrison-chen.dev/2024/12/14/vps%E5%BF%83%E5%BE%97%EF%BC%86%E9%83%A8%E7%BD%B2%E4%B8%80%E4%BA%9B%E5%B7%A5%E5%85%B7%E6%84%9F%E6%83%B3/index.html",
+            "publisher": {
+            "@type": "Organization",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://blog.harrison-chen.devundefined"
+            },
+            "name": "Harrison Chen"
+            },
+            "headline": "vps心得＆部署一些工具感想 | Haox Land",
+            "datePublished": "2024-12-14T17:44:38.000Z",
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": "https://blog.harrison-chen.dev/2024/12/14/vps%E5%BF%83%E5%BE%97%EF%BC%86%E9%83%A8%E7%BD%B2%E4%B8%80%E4%BA%9B%E5%B7%A5%E5%85%B7%E6%84%9F%E6%83%B3/index.html"
+            },
+            "@context": "http://schema.org"
+        }
+    </script>
+
+
+
+
+    
+
+    
+
+    
+
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+
+    
+
+    
+
+    
+
+    
+<link rel="stylesheet" href="/dist/build.css?v=1654266144177.css">
+
+
+    
+<link rel="stylesheet" href="/dist/custom.css?v=1654266144177.css">
+
+
+    <script>
+        window.isPost = true
+        window.aomori = {
+            
+            
+            
+        }
+        window.aomori_logo_typed_animated = true
+        window.aomori_search_algolia = false
+
+    </script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+<body>
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+    <header class="header">
+        <div class="header-type">
+            
+            <div class="header-type-inner">
+                
+                    <div id="typed-strings" style="display:none">
+                        <p>Haox Land</p>
+                    </div>
+                    <a class="header-type-title" id="typed" href="/"></a>
+                
+    
+                
+            </div>
+        </div>
+        <div class="header-menu">
+            <div class="header-menu-inner">
+                
+                <a href="/">Home</a>
+                
+                <a href="/About">About</a>
+                
+            </div>
+            <div class="header-menu-social">
+                
+    <a class="social" target="_blank" href="https://github.com/Harrison-Dev">
+        <ion-icon name="logo-github"></ion-icon>
+    </a>
+
+    <a class="social" target="_blank" href="https://www.linkedin.com/in/harrison-chen-tw">
+        <ion-icon name="logo-linkedin"></ion-icon>
+    </a>
+
+    <a class="social" target="_blank" href="https://twitter.com/HaoCooLLL">
+        <ion-icon name="logo-twitter"></ion-icon>
+    </a>
+
+            </div>
+        </div>
+
+        <div class="header-menu-mobile">
+            <div class="header-menu-mobile-inner" id="mobile-menu-open">
+                <i class="icon icon-menu"></i>
+            </div>
+        </div>
+    </header>
+
+    <div class="header-menu-mobile-menu">
+        <div class="header-menu-mobile-menu-bg"></div>
+        <div class="header-menu-mobile-menu-wrap">
+            <div class="header-menu-mobile-menu-inner">
+                <div class="header-menu-mobile-menu-close" id="mobile-menu-close">
+                    <i class="icon icon-cross"></i>
+                </div>
+                <div class="header-menu-mobile-menu-list">
+                    
+                    <a href="/">Home</a>
+                    
+                    <a href="/About">About</a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+    <div class="container">
+        <div class="main">
+            <section class="inner">
+                <section class="inner-main">
+                    <div class="post">
+    <article id="post-cmakty56q0001pkpuhxhqbvi8" class="article article-type-post" itemscope
+    itemprop="blogPost">
+
+    <div class="article-inner">
+
+        
+          
+        
+        
+        
+
+        
+        <header class="article-header">
+            
+  
+    <h1 class="article-title" itemprop="name">
+      vps心得＆部署一些工具感想
+    </h1>
+  
+
+        </header>
+        
+
+        <div class="article-more-info article-more-info-post hairline">
+
+            <div class="article-date">
+  <time datetime="2024-12-14T17:44:38.000Z" itemprop="datePublished">2024-12-15</time>
+</div>
+
+            
+            <div class="article-category">
+                <a class="article-category-link" href="/categories/Software-Development/">Software Development</a>
+            </div>
+            
+
+            
+            <div class="article-tag">
+                <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Backend/" rel="tag">Backend</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li></ul>
+            </div>
+            
+
+            
+            <div class="article-busuanzi">
+                <span id="busuanzi_value_page_pv">N</span> 人看过
+            </div>
+            
+
+        </div>
+
+        <div class="article-entry post-inner-html hairline" itemprop="articleBody">
+            <p><br/></p>
+<p>最近因為朋友的surfshark到期了，加上自己想獲得一個連線到日本的節點，以及希望有一個public ip可以拿來建立一些web service，上網研究了一下購入了日本的VPS服務。</p>
+<p>在一篇講馬娘如何繞過cygames的檢查的巴哈文章裡面看到了 <a target="_blank" rel="noopener" href="https://web.arena.ne.jp/indigo/">WebArena Indigo</a> ，一個月只要400多日幣就可以開一台VPS （spec如下，少的可憐 ＱＱ）對於我目前的需求來說還是蠻夠用了。</p>
+<p><img src="/img/vps心得＆部署一些工具感想/img_1.png" alt="image"></p>
+<span id="more"></span>
+<p><br/></p>
+<h2 id="Instance選擇？"><a href="#Instance選擇？" class="headerlink" title="Instance選擇？"></a>Instance選擇？</h2><p>因為WebArena蠻多中國的文章都有詳述，開instance的介面說實在也蠻單純的，這邊就直接跳過開機的步驟（我也沒截圖 嘻嘻）。</p>
+<p>機器本身就是一台qemu/kvm，可以選centos/ubuntu等常見的distrubtion，似乎也有windows server的選項，但想到license的溢價，對我個人來說是完全沒考慮過，就一台vps打天下吧！</p>
+<p>另外平台也有提供snapshot功能，但snapshot也要依照儲存時間計費，實在太不划算了，趕緊弄一弄自己的IaC做自動部署環境那些，感覺還比較實際。</p>
+<p><br/></p>
+<h2 id="首先拿來幹嘛"><a href="#首先拿來幹嘛" class="headerlink" title="首先拿來幹嘛"></a>首先拿來幹嘛</h2><p>我個人的使用目的第一號，是想要一個日本的網路節點可以拿來看一些日本動畫之類的（動畫瘋不是什麼都有），但大家也知道日本的網路服務非常的鎖國外IP，甚至三大csp/oracle的都被ban光光，更別說那些每天看得到廣告的vpn品牌可以說是完全不用想拿來看任何日本網站。</p>
+<p>所以首先就使用這邊開的instance來嘗試連線，很幸運的沒有在我想使用的服務的block list中，順利用100多台幣獲得一台好夥伴。</p>
+<p><br/></p>
+<h2 id="部署了什麼服務"><a href="#部署了什麼服務" class="headerlink" title="部署了什麼服務"></a>部署了什麼服務</h2><h3 id="TW-forum-feed-化大作戰"><a href="#TW-forum-feed-化大作戰" class="headerlink" title="TW forum feed 化大作戰"></a>TW forum feed 化大作戰</h3><p>在去年開啟了gcp試用的期間，我使用golang簡單寫了一些cloud function拿來做ptt/噗浪的貼文feed化，repo在這邊<a target="_blank" rel="noopener" href="https://github.com/Harrison-Dev/go_feed_tool">go-feed-tool</a>原本是使用cloud function形式，試用了<a target="_blank" rel="noopener" href="https://www.cursor.com/">Cursor</a>來進行web server的改版，用起來還挺得心應手，大約在半小時～一小時的區間就成功部署成為web server app，還做了一些功能的調整更新。</p>
+<p><br/></p>
+<h3 id="RSS-feed-telegram-bot"><a href="#RSS-feed-telegram-bot" class="headerlink" title="RSS feed telegram bot"></a>RSS feed telegram bot</h3><p>因為我個人和交友圈，最常使用的social app其實是telegram，telegram有著碾壓其他社群軟體的跨平台同步速度，更扯的是他的bot是完全不用收錢，為了讓自己更方便「被動」獲取一些論壇資訊（真的花太多時間滑PTT= =）我使用了公開repo <a target="_blank" rel="noopener" href="https://github.com/Rongronggg9/RSS-to-Telegram-Bot">RSS-To-Telegram-Bot</a>，部署到自己的機器上，在做for個人的RSS通知機器人。</p>
+<p>順帶一提這個作者也有一個共同使用的bot公開，但為了自己rss註冊表資料的可控、隱私、還有爬文web app說實在也不想隨便暴露，所以自己建在自己機器上對我來說比較適合一些。</p>
+<p><br/></p>
+<h3 id="Nuget-To-Unitypackage-服務"><a href="#Nuget-To-Unitypackage-服務" class="headerlink" title="Nuget To Unitypackage 服務"></a>Nuget To Unitypackage 服務</h3><p>使用Unity的時候，如果想使用nuget的package(例如大家都愛的Newtonsoft.Json)其實是一件相當麻煩的苦差事，現在大部分使用 <a target="_blank" rel="noopener" href="https://github.com/GlitchEnzo/NuGetForUnity">NuGetForUnity</a> 專案來管控下載以及dependency等，但有時候只是想單獨使用某一包，也不想安裝這個專案（有時候覺得太過龐大），所以簡單做了一個web service + executable的程式，可以使用nuget下載package，自動選擇對unity專案較為適合的target，建立asmdef的關聯，最後打包成unitypackage可以一鍵置入專案。</p>
+<p>專案在這：<a target="_blank" rel="noopener" href="https://github.com/Harrison-Dev/nuget-2-dll-go">nuget-2-dll-go</a></p>
+<p>值得一提的是，在部署這個服務的時候遇到蠻多問題，第一個是目前前面的服務docker image都是基於alpine就可以運行，但這個專案因為需要nuget，使用debian會是相對穩定的執行環境，所以程式在build的時候雖然一樣基於golang的alpine環境建立，但執行環境我選擇了debian:bullseye-slim，沒想到才是噩夢的開始…</p>
+<p>首先是因為其他docker-compose都在正常進行中，所以機器本來記憶體就所剩不多，在安裝debian的nuget的時候又會調用到蠻大量的記憶體，結果我這台只有1G記憶體的vps直接吃不消，被out of memory killer砍翻了，機器當掉好幾次。</p>
+<p>後來開著htop同時監督，才發現這個階段記憶體完全用到超過90%，後面是不可能完成的，還好這vps雖小還是給了20GB的SSD，趕緊的切了2GB當swap file，才真的成功部署到機器上（kernal版本不給我跑zram orz，不然真的不太想直接開到swap file）。</p>
+<h3 id="其他部署問題"><a href="#其他部署問題" class="headerlink" title="其他部署問題"></a>其他部署問題</h3><p>因為這期間我也購入了自己的domain name，所以用了traefik來做簡易的LB/reverse proxy，把這些服務都分到不同的subdomain去。</p>
+<p>結果發現Cloudflare的dns，好像會自動上https，所以處理CA憑證那邊也花了快半小時左右，才成功把這些service公開出來讓自己的rss reader使用。</p>
+<p><br/></p>
+<h2 id="接下來要做什麼"><a href="#接下來要做什麼" class="headerlink" title="接下來要做什麼"></a>接下來要做什麼</h2><p>目前還在想有什麼服務可以部署，但作為一個遊戲開發者，感覺自己應該要開始拓展多人遊戲的開發技能了。</p>
+<p>這個機器小到離譜，所以如果拿來做relay server感覺可能會翻車，目前構想應該是做簡單的match-making/lobby，然後打通STUN之後讓玩家們直接nat punchthrough來連線？ 不曉得unity netcode有沒有別人寫好的套件可用，Unity自己要賣Cloud Service的Relay Server，感覺肯定不會推薦用p2p遊玩 lul。</p>
+<p><br/></p>
+<p>總之最近買了vps/domain name等，又複習了一大堆linux admin的設定，還有現代雲的一些常用工具等等，接下來如果可以蹭到一些oracle的機器，感覺可以開始導入一些Terraform之類的IaC之類的來做自動化部署etc。</p>
+<p>後端技能樹越點越多的Game Programmer是不是搞錯了什麼？ 為了自清自己是Game Programmer指好放一下自己上電視的片段已證清白 ｈａｈａ</p>
+<div id="wrap">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/RLgXk2xy79c?si=C6IK0kDtmsGzyqDO&amp;start=496" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+
+        </div>
+
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+<nav class="article-nav">
+  
+  
+    <a href="/2023/09/10/Travel/%E4%BA%AC%E9%83%BDBitSummit%E9%81%8A%E8%A8%98/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-caption">上一篇</div>
+      <div class="article-nav-title">京都BitSummit遊記</div>
+    </a>
+  
+</nav>
+
+
+    <section class="share">
+        <div class="share-title">分享</div>
+        <a class="share-item" target="_blank"
+            href="https://twitter.com/share?text=vps心得＆部署一些工具感想 - Haox Land&url=https%3A%2F%2Fblog.harrison-chen.dev%2F2024%2F12%2F14%2Fvps%25E5%25BF%2583%25E5%25BE%2597%25EF%25BC%2586%25E9%2583%25A8%25E7%25BD%25B2%25E4%25B8%2580%25E4%25BA%259B%25E5%25B7%25A5%25E5%2585%25B7%25E6%2584%259F%25E6%2583%25B3%2F">
+            <ion-icon name="logo-twitter"></ion-icon>
+        </a>
+        <a class="share-item" target="_blank"
+            href="https://www.facebook.com/sharer.php?title=vps心得＆部署一些工具感想 - Haox Land&u=https%3A%2F%2Fblog.harrison-chen.dev%2F2024%2F12%2F14%2Fvps%25E5%25BF%2583%25E5%25BE%2597%25EF%25BC%2586%25E9%2583%25A8%25E7%25BD%25B2%25E4%25B8%2580%25E4%25BA%259B%25E5%25B7%25A5%25E5%2585%25B7%25E6%2584%259F%25E6%2583%25B3%2F">
+            <ion-icon name="logo-facebook"></ion-icon>
+        </a>
+        <!-- <a class="share-item" target="_blank"
+            href="https://service.weibo.com/share/share.php?title=vps心得＆部署一些工具感想 - Haox Land&url=https://blog.harrison-chen.dev/2024/12/14/vps%E5%BF%83%E5%BE%97%EF%BC%86%E9%83%A8%E7%BD%B2%E4%B8%80%E4%BA%9B%E5%B7%A5%E5%85%B7%E6%84%9F%E6%83%B3/&pic=">
+            <div class="n-icon n-icon-weibo"></div>
+        </a> -->
+    </section>
+
+</article>
+
+
+
+
+<section class="comments comments-disqus">
+    <div id="disqus_thread"></div>
+    <script>
+        ;(function () {
+            // DON'T EDIT BELOW THIS LINE
+            var d = document,
+                s = d.createElement('script')
+            s.src =
+                'https://harrison0628.disqus.com/embed.js'
+            s.setAttribute('data-timestamp', +new Date())
+            ;(d.head || d.body).appendChild(s)
+        })()
+    </script>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</div>
+                </section>
+            </section>
+
+            
+            <aside class="sidebar ">
+                
+
+
+<div class="widget" id="widget">
+    
+      
+  <div class="widget-wrap">
+    <div class="widget-inner">
+      <div class="toc post-toc-html"></div>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget-wrap widget-cate">
+    <div class="widget-title"><span>Categories</span></div>
+    <div class="widget-inner">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Game-Implementations/">Game Implementations</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Game-Mathematics/">Game Mathematics</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Game-Physics/">Game Physics</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Game-Programming/">Game Programming</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Software-Development/">Software Development</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Unity/">Unity</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/travel/">travel</a></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget-wrap widget-tags">
+    <div class="widget-title"><span>Tags</span></div>
+    <div class="widget-inner">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Backend/" rel="tag">Backend</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Basic/" rel="tag">Basic</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-Programming-Language/" rel="tag">C# Programming Language</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Camera/" rel="tag">Camera</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Computer-Orgnization/" rel="tag">Computer Orgnization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Data-Structure/" rel="tag">Data Structure</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fun/" rel="tag">Fun</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Game-Math/" rel="tag">Game Math</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Game-Physics/" rel="tag">Game Physics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Memory-Management/" rel="tag">Memory Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Operating-System/" rel="tag">Operating System</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Programming-Tips/" rel="tag">Programming Tips</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Software-Development/" rel="tag">Software Development</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Unity/" rel="tag">Unity</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/game-development/" rel="tag">game development</a></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget-wrap widget-recent-posts">
+    <div class="widget-title"><span>Recent Posts</span></div>
+    <div class="widget-inner">
+      <ul>
+        
+          <li>
+            <a href="/2024/12/14/vps%E5%BF%83%E5%BE%97%EF%BC%86%E9%83%A8%E7%BD%B2%E4%B8%80%E4%BA%9B%E5%B7%A5%E5%85%B7%E6%84%9F%E6%83%B3/">vps心得＆部署一些工具感想</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/Travel/%E4%BA%AC%E9%83%BDBitSummit%E9%81%8A%E8%A8%98/">京都BitSummit遊記</a>
+          </li>
+        
+          <li>
+            <a href="/2022/07/27/Game%20Programming/Fiber%20Job%20System/">Fiber based job system</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/05/Unity/UniTask/">UniTask：利用async/await優雅的撰寫callback</a>
+          </li>
+        
+          <li>
+            <a href="/2020/04/25/Game%20Physics/Physics%20Constraint/">Game Physics - Constraint</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget-wrap widget-archive">
+    <div class="widget-title"><span>Archive</span></div>
+    <div class="widget-inner">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/">2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/">2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/">2018</a></li></ul>
+    </div>
+  </div>
+
+
+    
+</div>
+
+<div id="backtop"><i class="icon icon-arrow-up"></i></div>
+            </aside>
+            
+        </div>
+    </div>
+
+    <footer class="footer">
+    <div class="footer-wave">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#3c4859" fill-opacity="1" d="M0,160L60,181.3C120,203,240,245,360,240C480,235,600,181,720,186.7C840,192,960,256,1080,261.3C1200,267,1320,213,1380,186.7L1440,160L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path></svg>
+    </div>
+
+    <!-- Please do not remove this -->
+    <!-- 开源不易，请勿删除 -->
+    <div class="footer-wrap">
+        <div class="footer-inner"> 
+            Haox Land &copy; 2025<br>
+            Powered By Hexo · Theme By <a href="https://linhong.me/" target="_blank">Aomori</a> · <a href="https://github.com/lh1me/hexo-theme-aomori" target="_blank">Github</a>
+        </div>
+    </div>
+
+</footer>
+
+<script type="module" src="https://unpkg.com/ionicons@6.0.2/dist/ionicons/ionicons.esm.js"></script>
+
+
+
+
+
+
+<script src="/dist/build.js?1654266144177.js"></script>
+
+
+<script src="/dist/custom.js?1654266144177.js"></script>
+
+
+
+
+
+<!-- Google Analytics-->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-K056ZHDF24"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-K056ZHDF24');
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+
+
+
+
+
+</body>
+
+</html>

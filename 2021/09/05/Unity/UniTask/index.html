@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    
+    <title>UniTask：利用async/await優雅的撰寫callback | Haox Land</title>
+
+    <meta name="description" content="&lt;!-- Ref : https://neuecc.medium.com/unitask-v2-zero-allocation-async-await-for-unity-with-asynchronous-linq-1aa9c96aa7dd --&gt;
+&lt;h2 id=&#34;Preface&#34;&gt;&lt;a href=&#34;#Preface&#34; class=&#34;headerlink&#34; title=&#34;Preface&#34;&gt;&lt;/a&gt;Preface&lt;/h2&gt;&lt;p&gt;前些日子因為一點小意外，需要在一兩天時間從零開始弄一個web service上雲，因為部分邏輯已經先用C#寫好了，平常也天天在用C#，沒想太多就用上了 ASP.NET core，沒想到意外的很香。&lt;/p&gt;
+&lt;p&gt;除了.NET Core很香之外，這兩天的時間寫了寫MVC的Web service，意外地發現和寫遊戲前端截然不同的寫法，在寫web service的時候，C#的async功能可以說是用個不停。&lt;/p&gt;
+&lt;p&gt;從以前就久聞UniRx差分出來的UniTask的大名，卻遲遲沒有機會與他相見，想說趁這個機會來碰一碰吧，碰巧，最近下班玩的一個插件，剛好使用Coroutine作為接口，趁這個機會，來試試UniTask可以怎麼讓程式撰寫變得有所不同。&lt;/p&gt;">
+    <meta name="keywords" content="">
+
+    
+
+    <meta property="og:locale" content="en" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content= "UniTask：利用async/await優雅的撰寫callback | Haox Land"  />
+    <meta property="og:description" content= "&lt;!-- Ref : https://neuecc.medium.com/unitask-v2-zero-allocation-async-await-for-unity-with-asynchronous-linq-1aa9c96aa7dd --&gt;
+&lt;h2 id=&#34;Preface&#34;&gt;&lt;a href=&#34;#Preface&#34; class=&#34;headerlink&#34; title=&#34;Preface&#34;&gt;&lt;/a&gt;Preface&lt;/h2&gt;&lt;p&gt;前些日子因為一點小意外，需要在一兩天時間從零開始弄一個web service上雲，因為部分邏輯已經先用C#寫好了，平常也天天在用C#，沒想太多就用上了 ASP.NET core，沒想到意外的很香。&lt;/p&gt;
+&lt;p&gt;除了.NET Core很香之外，這兩天的時間寫了寫MVC的Web service，意外地發現和寫遊戲前端截然不同的寫法，在寫web service的時候，C#的async功能可以說是用個不停。&lt;/p&gt;
+&lt;p&gt;從以前就久聞UniRx差分出來的UniTask的大名，卻遲遲沒有機會與他相見，想說趁這個機會來碰一碰吧，碰巧，最近下班玩的一個插件，剛好使用Coroutine作為接口，趁這個機會，來試試UniTask可以怎麼讓程式撰寫變得有所不同。&lt;/p&gt;" />
+    <meta property="og:url" content="https://blog.harrison-chen.dev/2021/09/05/Unity/UniTask/index.html" />
+    <meta property="og:site_name" content="" />
+    <meta property="article:author" content="Harrison Chen" />
+    <meta property="article:publisher" content="" />
+    <meta property="og:description" content="&lt;!-- Ref : https://neuecc.medium.com/unitask-v2-zero-allocation-async-await-for-unity-with-asynchronous-linq-1aa9c96aa7dd --&gt;
+&lt;h2 id=&#34;Preface&#34;&gt;&lt;a href=&#34;#Preface&#34; class=&#34;headerlink&#34; title=&#34;Preface&#34;&gt;&lt;/a&gt;Preface&lt;/h2&gt;&lt;p&gt;前些日子因為一點小意外，需要在一兩天時間從零開始弄一個web service上雲，因為部分邏輯已經先用C#寫好了，平常也天天在用C#，沒想太多就用上了 ASP.NET core，沒想到意外的很香。&lt;/p&gt;
+&lt;p&gt;除了.NET Core很香之外，這兩天的時間寫了寫MVC的Web service，意外地發現和寫遊戲前端截然不同的寫法，在寫web service的時候，C#的async功能可以說是用個不停。&lt;/p&gt;
+&lt;p&gt;從以前就久聞UniRx差分出來的UniTask的大名，卻遲遲沒有機會與他相見，想說趁這個機會來碰一碰吧，碰巧，最近下班玩的一個插件，剛好使用Coroutine作為接口，趁這個機會，來試試UniTask可以怎麼讓程式撰寫變得有所不同。&lt;/p&gt;" />
+    <meta name="twitter:title" content="UniTask：利用async/await優雅的撰寫callback | Haox Land"/>
+    <meta name="twitter:description" content="&lt;!-- Ref : https://neuecc.medium.com/unitask-v2-zero-allocation-async-await-for-unity-with-asynchronous-linq-1aa9c96aa7dd --&gt;
+&lt;h2 id=&#34;Preface&#34;&gt;&lt;a href=&#34;#Preface&#34; class=&#34;headerlink&#34; title=&#34;Preface&#34;&gt;&lt;/a&gt;Preface&lt;/h2&gt;&lt;p&gt;前些日子因為一點小意外，需要在一兩天時間從零開始弄一個web service上雲，因為部分邏輯已經先用C#寫好了，平常也天天在用C#，沒想太多就用上了 ASP.NET core，沒想到意外的很香。&lt;/p&gt;
+&lt;p&gt;除了.NET Core很香之外，這兩天的時間寫了寫MVC的Web service，意外地發現和寫遊戲前端截然不同的寫法，在寫web service的時候，C#的async功能可以說是用個不停。&lt;/p&gt;
+&lt;p&gt;從以前就久聞UniRx差分出來的UniTask的大名，卻遲遲沒有機會與他相見，想說趁這個機會來碰一碰吧，碰巧，最近下班玩的一個插件，剛好使用Coroutine作為接口，趁這個機會，來試試UniTask可以怎麼讓程式撰寫變得有所不同。&lt;/p&gt;"/>
+    <script type="application/ld+json">
+        {
+            "description": "&lt;!-- Ref : https://neuecc.medium.com/unitask-v2-zero-allocation-async-await-for-unity-with-asynchronous-linq-1aa9c96aa7dd --&gt;
+&lt;h2 id=&#34;Preface&#34;&gt;&lt;a href=&#34;#Preface&#34; class=&#34;headerlink&#34; title=&#34;Preface&#34;&gt;&lt;/a&gt;Preface&lt;/h2&gt;&lt;p&gt;前些日子因為一點小意外，需要在一兩天時間從零開始弄一個web service上雲，因為部分邏輯已經先用C#寫好了，平常也天天在用C#，沒想太多就用上了 ASP.NET core，沒想到意外的很香。&lt;/p&gt;
+&lt;p&gt;除了.NET Core很香之外，這兩天的時間寫了寫MVC的Web service，意外地發現和寫遊戲前端截然不同的寫法，在寫web service的時候，C#的async功能可以說是用個不停。&lt;/p&gt;
+&lt;p&gt;從以前就久聞UniRx差分出來的UniTask的大名，卻遲遲沒有機會與他相見，想說趁這個機會來碰一碰吧，碰巧，最近下班玩的一個插件，剛好使用Coroutine作為接口，趁這個機會，來試試UniTask可以怎麼讓程式撰寫變得有所不同。&lt;/p&gt;",
+            "author": { "@type": "Person", "name": "Harrison Chen" },
+            "@type": "BlogPosting",
+            "url": "https://blog.harrison-chen.dev/2021/09/05/Unity/UniTask/index.html",
+            "publisher": {
+            "@type": "Organization",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://blog.harrison-chen.devundefined"
+            },
+            "name": "Harrison Chen"
+            },
+            "headline": "UniTask：利用async/await優雅的撰寫callback | Haox Land",
+            "datePublished": "2021-09-05T18:30:45.000Z",
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": "https://blog.harrison-chen.dev/2021/09/05/Unity/UniTask/index.html"
+            },
+            "@context": "http://schema.org"
+        }
+    </script>
+
+
+
+
+    
+
+    
+
+    
+
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+
+    
+
+    
+
+    
+
+    
+<link rel="stylesheet" href="/dist/build.css?v=1654266144177.css">
+
+
+    
+<link rel="stylesheet" href="/dist/custom.css?v=1654266144177.css">
+
+
+    <script>
+        window.isPost = true
+        window.aomori = {
+            
+            
+            
+        }
+        window.aomori_logo_typed_animated = true
+        window.aomori_search_algolia = false
+
+    </script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+<body>
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+    <header class="header">
+        <div class="header-type">
+            
+            <div class="header-type-inner">
+                
+                    <div id="typed-strings" style="display:none">
+                        <p>Haox Land</p>
+                    </div>
+                    <a class="header-type-title" id="typed" href="/"></a>
+                
+    
+                
+            </div>
+        </div>
+        <div class="header-menu">
+            <div class="header-menu-inner">
+                
+                <a href="/">Home</a>
+                
+                <a href="/About">About</a>
+                
+            </div>
+            <div class="header-menu-social">
+                
+    <a class="social" target="_blank" href="https://github.com/Harrison-Dev">
+        <ion-icon name="logo-github"></ion-icon>
+    </a>
+
+    <a class="social" target="_blank" href="https://www.linkedin.com/in/harrison-chen-tw">
+        <ion-icon name="logo-linkedin"></ion-icon>
+    </a>
+
+    <a class="social" target="_blank" href="https://twitter.com/HaoCooLLL">
+        <ion-icon name="logo-twitter"></ion-icon>
+    </a>
+
+            </div>
+        </div>
+
+        <div class="header-menu-mobile">
+            <div class="header-menu-mobile-inner" id="mobile-menu-open">
+                <i class="icon icon-menu"></i>
+            </div>
+        </div>
+    </header>
+
+    <div class="header-menu-mobile-menu">
+        <div class="header-menu-mobile-menu-bg"></div>
+        <div class="header-menu-mobile-menu-wrap">
+            <div class="header-menu-mobile-menu-inner">
+                <div class="header-menu-mobile-menu-close" id="mobile-menu-close">
+                    <i class="icon icon-cross"></i>
+                </div>
+                <div class="header-menu-mobile-menu-list">
+                    
+                    <a href="/">Home</a>
+                    
+                    <a href="/About">About</a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+    <div class="container">
+        <div class="main">
+            <section class="inner">
+                <section class="inner-main">
+                    <div class="post">
+    <article id="post-cmakty57h0025pkpub9oq4te1" class="article article-type-post" itemscope
+    itemprop="blogPost">
+
+    <div class="article-inner">
+
+        
+          
+        
+        
+        
+
+        
+        <header class="article-header">
+            
+  
+    <h1 class="article-title" itemprop="name">
+      UniTask：利用async/await優雅的撰寫callback
+    </h1>
+  
+
+        </header>
+        
+
+        <div class="article-more-info article-more-info-post hairline">
+
+            <div class="article-date">
+  <time datetime="2021-09-05T18:30:45.000Z" itemprop="datePublished">2021-09-06</time>
+</div>
+
+            
+            <div class="article-category">
+                <a class="article-category-link" href="/categories/Unity/">Unity</a>
+            </div>
+            
+
+            
+            <div class="article-tag">
+                <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Basic/" rel="tag">Basic</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Programming-Tips/" rel="tag">Programming Tips</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Unity/" rel="tag">Unity</a></li></ul>
+            </div>
+            
+
+            
+            <div class="article-busuanzi">
+                <span id="busuanzi_value_page_pv">N</span> 人看过
+            </div>
+            
+
+        </div>
+
+        <div class="article-entry post-inner-html hairline" itemprop="articleBody">
+            <!-- Ref : https://neuecc.medium.com/unitask-v2-zero-allocation-async-await-for-unity-with-asynchronous-linq-1aa9c96aa7dd -->
+<h2 id="Preface"><a href="#Preface" class="headerlink" title="Preface"></a>Preface</h2><p>前些日子因為一點小意外，需要在一兩天時間從零開始弄一個web service上雲，因為部分邏輯已經先用C#寫好了，平常也天天在用C#，沒想太多就用上了 ASP.NET core，沒想到意外的很香。</p>
+<p>除了.NET Core很香之外，這兩天的時間寫了寫MVC的Web service，意外地發現和寫遊戲前端截然不同的寫法，在寫web service的時候，C#的async功能可以說是用個不停。</p>
+<p>從以前就久聞UniRx差分出來的UniTask的大名，卻遲遲沒有機會與他相見，想說趁這個機會來碰一碰吧，碰巧，最近下班玩的一個插件，剛好使用Coroutine作為接口，趁這個機會，來試試UniTask可以怎麼讓程式撰寫變得有所不同。</p>
+<span id="more"></span>
+<h2 id="Sync-vs-Async"><a href="#Sync-vs-Async" class="headerlink" title="Sync vs Async"></a>Sync vs Async</h2><p>印象好像從大一的計概？還是後來的組合語言或計組之類的課程，都常常提到同步和非同步的差別。<br>不太確定課本精準的定義，不過<strong>Synchronize(sync, 同步)</strong>大致上是指在程式執行過程中，<strong>必須等前一個訊號執行完成，才繼續進行下一個指令</strong>，而<strong>Asynchronize(async, 非同步)</strong>則是反過來，這個訊號並<strong>不一定要等到執行到了盡頭，才開始下一個指令的運行</strong>。</p>
+<p>在一般寫程式的時候，大部分的程式碼都是逐行、同步進行的(雖然流水線、指令級同步等東西存在，但邏輯上還是逐行在跑)，然而，可想而知，有許多的指令會造成執行上的瓶頸，例如：IO, 網路相關的動作，相對於程式碼都是緩慢的，以同步方式執行，就必須要在這裡等到天荒地老，CPU直接等到睡著，可想而知這不是個好點子。</p>
+<h2 id="Callback"><a href="#Callback" class="headerlink" title="Callback"></a>Callback</h2><p>此時，就需要用到callback function這種做法。<br>傳進一個delegate (或是function pointer，如果你熱愛C語言的話)，等到事件結束後，再繼續執行這個完成後的function，當然可以將IO得到的資訊作為參數之類的。</p>
+<p>許多library都是類似底下這種形式呼叫：</p>
+<pre><code class="lang-csharp">void DoSomethingCool()
+&#123;
+    DoSomethingNeedToWait(ioStuff =&gt; 
+    &#123;
+        DoSomethingAfterHugeIO(ioStuff);
+    &#125;);
+&#125;
+
+void DoSomethingNeedToWait(System.Action&lt;IOStuff&gt; callback)
+&#123;
+    var IOStuff = SomethingHugeIO();
+    callback(IOStuff);
+&#125;
+
+void DoSomethingNeedToWait(System.Action callback)
+&#123;
+    SomethingHugeIO();
+    callback();
+&#125;
+</code></pre>
+<p>扣掉這樣IO其實還是同步的吐槽，這樣的作法已經非常酷，但想像到底下的狀況<br>當IO結束之後，必須送到某個伺服器等待回應，程式碼就會開始出現怪味：</p>
+<pre><code class="lang-csharp">void DoSomethingCool()
+&#123;
+    DoSomethingNeedToWait(ioStuff =&gt; 
+    &#123;
+        DoSomethingNeedACoolServer(ioStuff, res =&gt;
+        &#123;
+            DoTheRealCoolThings(res);
+        &#125;);
+    &#125;);
+&#125;
+
+void DoSomethingNeedToWait(System.Action&lt;IOStuff&gt; callback)
+&#123;
+    var IOStuff = SomethingHugeIO();
+    callback(IOStuff);
+&#125;
+
+void DoSomethingNeedACoolServer(IOStuff coolData, System.Action&lt;Response&gt; onResponsed)
+&#123;
+    var response = SomethingWaitServer();
+    onResponsed(response);
+&#125;
+</code></pre>
+<p>當然，扣掉request好像完全不需要handle error的吐槽，我們可以看到DoSomethingCool的主函式，已經開始出現波動拳的力量。</p>
+<p>這對於一個加班N小時候看到這段程式碼的工程師來說，很有可能就是壓垮他的最後一片稻草了。</p>
+<p>想想一般的工程師，回到家之後沒有女僕龍可以陪伴，我們真的不需要互相傷害，製造出這種callback hell，幸好，Unity裡面早有一個常見方式可以克服這件事，那就是Coroutine。</p>
+<h2 id="Coroutine"><a href="#Coroutine" class="headerlink" title="Coroutine"></a>Coroutine</h2><p>Coroutine使用C#的迭代器模式，利用一個返回迭代器的Function來進行序列執行，並且在每一次Update後，做一次tick觸發。</p>
+<p>原本的程式碼，可以改寫成這種形式：</p>
+<pre><code class="lang-csharp">IOStuff _ioStuff;
+Response _response;
+
+void Start()
+&#123;
+    StartCoroutine(DoSomethingCool());
+&#125;
+
+IEnumerator DoSomethingCool()
+&#123;
+    yield return DoSomethingNeedToWait();
+    yield return DoSomethingNeedACoolServer(_ioStuff);
+    DoTheRealCoolThings(_response);
+&#125;
+
+IEnumerator DoSomethingNeedToWait()
+&#123;
+    yield return SomethingHugeIO(out _ioStuff);
+&#125;
+
+IEnumerator DoSomethingNeedACoolServer(IOStuff coolData)
+&#123;
+    yield return SomethingWaitServer(out _response);
+&#125;
+</code></pre>
+<p>顯然可以感覺到，比波動拳安全許多，yield return後的事情，只會在一個frame進行一次，<br>如果還沒完成，會等到下一次tick時再次檢查，這樣可以迴避掉波動拳，並且讓半夜看到這段程式碼的工程師感到舒暢許多，明顯可以一眼看出在等什麼以及資料流的走向。</p>
+<p>然而，Coroutine必須綁定monobehaviour進行，以及每一次Update時unity都需要費心來關切他，而且try-catch區段在yield語法下不可用，或許我們不需要那麼多心思在製作這樣的串列上，而是有其他替代方法。</p>
+<h2 id="UniTask"><a href="#UniTask" class="headerlink" title="UniTask"></a>UniTask</h2><p>UniTask是利用C#的async/await語言機制整合進unity元件的一個解決方法，<br>可以用雷同C# Task的方式來進行unity元件的操作，獲得一個更優雅的call chain，並且不需要擔心allocation問題(至少readme上是寫no allocation)。<br>(async在語言層面上應該是類似C++的std::this_thread::yield，將這個thread的優先權交出，但C#的async會不會真的交出優先權我不曉得)</p>
+<p>我想這邊開始就不用上面提到的那些假舉例，而是用我最近實際遇到的使用情境來說明。</p>
+<p>前些日子在特價的時候，我買了MoreMountain的<a target="_blank" rel="noopener" href="https://assetstore.unity.com/packages/tools/particles-effects/feel-183370">Feel</a>這個插件，他可以使用預先做好的元件，做出許多很酷的效果，包含Cinemachine的一些元件互動，或是Post Effect的動態等。</p>
+<p>可以做出像這樣的打擊效果：<br><img src="/img/UniTask/juicy.gif" alt="Juicy"></p>
+<p>順帶一提，再加入效果前的樣子是這樣的：</p>
+<p><img src="/img/UniTask/no_juicy.gif" alt="NoJuicy"></p>
+<p>可以說是相當方便的插件，端詳他的程式碼後，發現他實作一連串演出的呼叫<strong>MMFeedbacks</strong>是使用coroutine呼叫的，倘若我們想要在這一連串演出結束過後，再銜接什麼演出，就必須遇到前面提到的Coroutine問題。</p>
+<p>MMFeedback的呼叫介面如下：</p>
+<pre><code class="lang-csharp">public virtual void PlayFeedbacks()
+&#123;
+    StartCoroutine(PlayFeedbacksInternal(this.transform.position, FeedbacksIntensity));
+&#125;
+</code></pre>
+<p>其實他有提供幾個Event可以直接對接，但如果我們想和其他coroutine，或是tweening演出一起寫成一個function，使用event的撰寫就會變得冗長且難以維護。</p>
+<p>用Event的方式來註冊的話，可以寫成如下：</p>
+<pre><code class="lang-csharp">private void HitSomething(Collider[] hits)
+&#123;
+    m_HitPos = GetRecent(3);
+    OnHit?.Invoke();
+    FeedbackHandler.Events.OnComplete.AddListener(() =&gt;
+    &#123;
+        TriggerAfterFeedback(hits);
+    &#125;);
+    FeedbackHandler.PlayFeedbacks();
+&#125;
+</code></pre>
+<p>這段程式碼有幾個問題，第一個是Event裡面的匿名function，執行時間其實在PlayFeedbacks底下，這導致了程式碼的順序與執行順序的不同，降低了一部分的可讀性。</p>
+<p>再者，這段程式碼其實沒有寫到RemoveListener的部分，如果每次呼叫都AddListener一次，會造成顯著的memory leak，當然我們也可以將event的註冊拉到物件初始化的時候，但這樣會將邏輯更進一步的分離，可讀性再次下降。</p>
+<p>最後，就是許多演出的串列如果在同一個function實作，最終會變成上面所說的波動拳問題，要將這個做法寫得漂亮，需要耗費許多苦心。</p>
+<p>還好，這個插件還提供第二個方案，也就是前面提到Unity對於callback hell的一個解法，也就是Coroutine。</p>
+<p>MMFeedback對於Coroutine的接口如下：</p>
+<pre><code class="lang-csharp">public virtual IEnumerator PlayFeedbacksCoroutine(Vector3 position3,...)
+&#123;
+    return PlayFeedbacksInternal(position, feedbacksIntensity, forceRevert);
+&#125;
+</code></pre>
+<p>可以看到，這個接口直接回傳了一個迭代器，我們可以簡單的利用這個IEnumrator改寫成如下：</p>
+<pre><code class="lang-csharp">private void HitSomething(Collider[] hits)
+&#123;
+    StartCoroutine(DoHitSomething(hits));
+&#125;
+
+private IEnumerator DoHitSomething(Collider[] hits)
+&#123;
+    m_HitPos = GetRecent(3);
+    OnHit?.Invoke();
+    yield return FeedbackHandler.PlayFeedbacksCoroutine(this.transform.position);
+    TriggerAfterFeedback(hits);
+&#125;
+</code></pre>
+<p>這樣就可以用Coroutine的方式，解決掉event可能產生的一些問題，但這樣就會產生一些coroutine的對應消耗，以及handle coroutine結束與否的問題，而前面提到的UniTask，可以用更優雅的方式做到。</p>
+<p>我們可以先為MMFeedbacks添加一個接口function如下：</p>
+<pre><code class="lang-csharp">public virtual async UniTask PlayFeedbacksAsync()
+&#123;
+    await PlayFeedbacksInternal(this.transform.position, FeedbacksIntensity);
+&#125;
+</code></pre>
+<p>UniTask會時做一個awaiter，將coroutine的執行完成與否這件事封裝到UniTask自己的internal enumerator之中，這樣我們呼叫時，就可以簡單地寫成這樣：</p>
+<pre><code class="lang-csharp">private async UniTask OnHitSomething(Collider[] hits)
+&#123;
+    m_HitPos = GetRecent(3);
+    OnHit?.Invoke();
+    await FeedbackHandler.PlayFeedbacksAsync();
+    TriggerAfterFeedback(hits);
+&#125;
+</code></pre>
+<p>這樣整個演出就可以簡單的寫成一個async function，其中的calling chain也會變得優雅許多，甚至如果有多個演出同時進行的時候，可以寫成下面的形式：</p>
+<pre><code class="lang-csharp">private async void DoTonsOfScreenPlay()
+&#123;
+    List&lt;UniTask&gt; screenPlays = new List&lt;UniTask&gt;();
+    screenPlays.Add(OnHitSomething()); 
+    screenPlays.Add(OnHitSomethingCool()); 
+    screenPlays.Add(OnHitSomethingCute()); 
+    screenPlays.Add(OnHitSomethingAhoy());
+    screenPlays.Add(LoadNextPartyAddressables());
+    await UniTask.WhenAll(screenPlays);
+
+    // After all screenplay end
+    await SceneManager.LoadSceneAsync(&quot;Next Party&quot;);
+&#125;
+</code></pre>
+<p>這樣我們可以在播出許多演出的同時，偷偷地在背後讀取Assets，直到一切都準備就緒了，馬上開始進行下一個場景的切換，達成一些無縫切換的效果。<br>順帶一提，轉場的概念可以去看我最敬愛的blog writer，羽毛的熱門文章：<a target="_blank" rel="noopener" href="https://featherchung.wordpress.com/2017/07/10/unity%E5%9F%BA%E6%9C%AC%E5%8A%9F8-%E9%87%8D%E6%96%B0%E8%BC%89%E5%85%A5%E5%A0%B4%E6%99%AF%E8%BD%89%E6%8F%9B/">重新載入&amp;場景轉換</a>，肯定會獲益良多。</p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>UniTask是個非常酷的插件，可以將許多演出與callback的可怕義大利麵程式碼，轉換成一眼就能看出結果的程式碼，同個作者的UniRx也是非常酷的插件，有興趣的可以去看看這個作者的repo們。</p>
+<h2 id="延伸閱讀"><a href="#延伸閱讀" class="headerlink" title="延伸閱讀"></a>延伸閱讀</h2><p><a target="_blank" rel="noopener" href="https://github.com/Cysharp/UniTask">UniTask Repo</a></p>
+<p><a target="_blank" rel="noopener" href="https://neuecc.medium.com/unitask-v2-zero-allocation-async-await-for-unity-with-asynchronous-linq-1aa9c96aa7dd">UniTask v2 — Zero Allocation async/await for Unity, with Asynchronous LINQ</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=Lvbs22iZFPk">【Unite 2017 Tokyo】「黒騎士と白の魔王」にみるC#で統一したサーバー/クライアント開発と現実的なUniRx使いこなし術</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/neuecc/UniRx">UniRx Repo</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/Cysharp/UniTask#external-assets">UniRx DoTween Integration</a></p>
+
+        </div>
+
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+<nav class="article-nav">
+  
+    <a href="/2022/07/27/Game%20Programming/Fiber%20Job%20System/" id="article-nav-newer" class="article-nav-link-wrap">
+      <div class="article-nav-caption">下一篇</div>
+      <div class="article-nav-title">
+        
+          Fiber based job system
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/04/25/Game%20Physics/Physics%20Constraint/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-caption">上一篇</div>
+      <div class="article-nav-title">Game Physics - Constraint</div>
+    </a>
+  
+</nav>
+
+
+    <section class="share">
+        <div class="share-title">分享</div>
+        <a class="share-item" target="_blank"
+            href="https://twitter.com/share?text=UniTask：利用async/await優雅的撰寫callback - Haox Land&url=https%3A%2F%2Fblog.harrison-chen.dev%2F2021%2F09%2F05%2FUnity%2FUniTask%2F">
+            <ion-icon name="logo-twitter"></ion-icon>
+        </a>
+        <a class="share-item" target="_blank"
+            href="https://www.facebook.com/sharer.php?title=UniTask：利用async/await優雅的撰寫callback - Haox Land&u=https%3A%2F%2Fblog.harrison-chen.dev%2F2021%2F09%2F05%2FUnity%2FUniTask%2F">
+            <ion-icon name="logo-facebook"></ion-icon>
+        </a>
+        <!-- <a class="share-item" target="_blank"
+            href="https://service.weibo.com/share/share.php?title=UniTask：利用async/await優雅的撰寫callback - Haox Land&url=https://blog.harrison-chen.dev/2021/09/05/Unity/UniTask/&pic=">
+            <div class="n-icon n-icon-weibo"></div>
+        </a> -->
+    </section>
+
+</article>
+
+
+
+
+<section class="comments comments-disqus">
+    <div id="disqus_thread"></div>
+    <script>
+        ;(function () {
+            // DON'T EDIT BELOW THIS LINE
+            var d = document,
+                s = d.createElement('script')
+            s.src =
+                'https://harrison0628.disqus.com/embed.js'
+            s.setAttribute('data-timestamp', +new Date())
+            ;(d.head || d.body).appendChild(s)
+        })()
+    </script>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</div>
+                </section>
+            </section>
+
+            
+            <aside class="sidebar ">
+                
+
+
+<div class="widget" id="widget">
+    
+      
+  <div class="widget-wrap">
+    <div class="widget-inner">
+      <div class="toc post-toc-html"></div>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget-wrap widget-cate">
+    <div class="widget-title"><span>Categories</span></div>
+    <div class="widget-inner">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Game-Implementations/">Game Implementations</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Game-Mathematics/">Game Mathematics</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Game-Physics/">Game Physics</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Game-Programming/">Game Programming</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Software-Development/">Software Development</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Unity/">Unity</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/travel/">travel</a></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget-wrap widget-tags">
+    <div class="widget-title"><span>Tags</span></div>
+    <div class="widget-inner">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Backend/" rel="tag">Backend</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Basic/" rel="tag">Basic</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-Programming-Language/" rel="tag">C# Programming Language</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Camera/" rel="tag">Camera</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Computer-Orgnization/" rel="tag">Computer Orgnization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Data-Structure/" rel="tag">Data Structure</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fun/" rel="tag">Fun</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Game-Math/" rel="tag">Game Math</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Game-Physics/" rel="tag">Game Physics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Memory-Management/" rel="tag">Memory Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Operating-System/" rel="tag">Operating System</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Programming-Tips/" rel="tag">Programming Tips</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Software-Development/" rel="tag">Software Development</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Unity/" rel="tag">Unity</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/game-development/" rel="tag">game development</a></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget-wrap widget-recent-posts">
+    <div class="widget-title"><span>Recent Posts</span></div>
+    <div class="widget-inner">
+      <ul>
+        
+          <li>
+            <a href="/2024/12/14/vps%E5%BF%83%E5%BE%97%EF%BC%86%E9%83%A8%E7%BD%B2%E4%B8%80%E4%BA%9B%E5%B7%A5%E5%85%B7%E6%84%9F%E6%83%B3/">vps心得＆部署一些工具感想</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/Travel/%E4%BA%AC%E9%83%BDBitSummit%E9%81%8A%E8%A8%98/">京都BitSummit遊記</a>
+          </li>
+        
+          <li>
+            <a href="/2022/07/27/Game%20Programming/Fiber%20Job%20System/">Fiber based job system</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/05/Unity/UniTask/">UniTask：利用async/await優雅的撰寫callback</a>
+          </li>
+        
+          <li>
+            <a href="/2020/04/25/Game%20Physics/Physics%20Constraint/">Game Physics - Constraint</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget-wrap widget-archive">
+    <div class="widget-title"><span>Archive</span></div>
+    <div class="widget-inner">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/">2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/">2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/">2018</a></li></ul>
+    </div>
+  </div>
+
+
+    
+</div>
+
+<div id="backtop"><i class="icon icon-arrow-up"></i></div>
+            </aside>
+            
+        </div>
+    </div>
+
+    <footer class="footer">
+    <div class="footer-wave">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#3c4859" fill-opacity="1" d="M0,160L60,181.3C120,203,240,245,360,240C480,235,600,181,720,186.7C840,192,960,256,1080,261.3C1200,267,1320,213,1380,186.7L1440,160L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path></svg>
+    </div>
+
+    <!-- Please do not remove this -->
+    <!-- 开源不易，请勿删除 -->
+    <div class="footer-wrap">
+        <div class="footer-inner"> 
+            Haox Land &copy; 2025<br>
+            Powered By Hexo · Theme By <a href="https://linhong.me/" target="_blank">Aomori</a> · <a href="https://github.com/lh1me/hexo-theme-aomori" target="_blank">Github</a>
+        </div>
+    </div>
+
+</footer>
+
+<script type="module" src="https://unpkg.com/ionicons@6.0.2/dist/ionicons/ionicons.esm.js"></script>
+
+
+
+
+
+
+<script src="/dist/build.js?1654266144177.js"></script>
+
+
+<script src="/dist/custom.js?1654266144177.js"></script>
+
+
+
+
+
+<!-- Google Analytics-->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-K056ZHDF24"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-K056ZHDF24');
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+
+
+
+
+
+</body>
+
+</html>
