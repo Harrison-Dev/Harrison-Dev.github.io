@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    
+    <title>關於C#記憶體管理那些事。 | Haox Land</title>
+
+    <meta name="description" content="&lt;p&gt;You can also see my post in &lt;a href=&#34;https://home.gamer.com.tw/creationDetail.php?sn=4475189&#34;&gt;Bahamut&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;使用Unity製作遊戲也好一陣子，&lt;/p&gt;
+&lt;p&gt;途中踩過不少坑都是對於Unity預設值與C#程式語言的設計上的不熟悉，&lt;/p&gt;
+&lt;p&gt;關於Unity預設值的部分，&lt;a href=&#34;https://www.slideshare.net/KelvinLo5/2019-unity-iii-tgdf&#34;&gt;達哥在今年的TGDF上的簡報&lt;/a&gt;讓我獲益良多，大家都該去看看。&lt;/p&gt;
+&lt;p&gt;這次想探討的是關於C#程式語言的設計方面，&lt;/p&gt;
+&lt;p&gt;特別是相對於C/C++這些低階語言來說，C#/Java的記憶體分配像是一個巨大的黑盒子，&lt;/p&gt;
+&lt;p&gt;運作起來還蠻順利的，但是時不時就會像樂高一樣踩到腳(而且很痛)，&lt;/p&gt;
+&lt;p&gt;這篇就來記錄一下自己學到的東西，順便討論裝箱(Boxing)跟C#的記憶體運作吧！&lt;/p&gt;">
+    <meta name="keywords" content="">
+
+    
+
+    <meta property="og:locale" content="en" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content= "關於C#記憶體管理那些事。 | Haox Land"  />
+    <meta property="og:description" content= "&lt;p&gt;You can also see my post in &lt;a href=&#34;https://home.gamer.com.tw/creationDetail.php?sn=4475189&#34;&gt;Bahamut&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;使用Unity製作遊戲也好一陣子，&lt;/p&gt;
+&lt;p&gt;途中踩過不少坑都是對於Unity預設值與C#程式語言的設計上的不熟悉，&lt;/p&gt;
+&lt;p&gt;關於Unity預設值的部分，&lt;a href=&#34;https://www.slideshare.net/KelvinLo5/2019-unity-iii-tgdf&#34;&gt;達哥在今年的TGDF上的簡報&lt;/a&gt;讓我獲益良多，大家都該去看看。&lt;/p&gt;
+&lt;p&gt;這次想探討的是關於C#程式語言的設計方面，&lt;/p&gt;
+&lt;p&gt;特別是相對於C/C++這些低階語言來說，C#/Java的記憶體分配像是一個巨大的黑盒子，&lt;/p&gt;
+&lt;p&gt;運作起來還蠻順利的，但是時不時就會像樂高一樣踩到腳(而且很痛)，&lt;/p&gt;
+&lt;p&gt;這篇就來記錄一下自己學到的東西，順便討論裝箱(Boxing)跟C#的記憶體運作吧！&lt;/p&gt;" />
+    <meta property="og:url" content="https://blog.harrison-chen.dev/2019/07/27/Game%20Programming/Memory%20Management%20in%20Game/index.html" />
+    <meta property="og:site_name" content="" />
+    <meta property="article:author" content="Harrison Chen" />
+    <meta property="article:publisher" content="" />
+    <meta property="og:description" content="&lt;p&gt;You can also see my post in &lt;a href=&#34;https://home.gamer.com.tw/creationDetail.php?sn=4475189&#34;&gt;Bahamut&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;使用Unity製作遊戲也好一陣子，&lt;/p&gt;
+&lt;p&gt;途中踩過不少坑都是對於Unity預設值與C#程式語言的設計上的不熟悉，&lt;/p&gt;
+&lt;p&gt;關於Unity預設值的部分，&lt;a href=&#34;https://www.slideshare.net/KelvinLo5/2019-unity-iii-tgdf&#34;&gt;達哥在今年的TGDF上的簡報&lt;/a&gt;讓我獲益良多，大家都該去看看。&lt;/p&gt;
+&lt;p&gt;這次想探討的是關於C#程式語言的設計方面，&lt;/p&gt;
+&lt;p&gt;特別是相對於C/C++這些低階語言來說，C#/Java的記憶體分配像是一個巨大的黑盒子，&lt;/p&gt;
+&lt;p&gt;運作起來還蠻順利的，但是時不時就會像樂高一樣踩到腳(而且很痛)，&lt;/p&gt;
+&lt;p&gt;這篇就來記錄一下自己學到的東西，順便討論裝箱(Boxing)跟C#的記憶體運作吧！&lt;/p&gt;" />
+    <meta name="twitter:title" content="關於C#記憶體管理那些事。 | Haox Land"/>
+    <meta name="twitter:description" content="&lt;p&gt;You can also see my post in &lt;a href=&#34;https://home.gamer.com.tw/creationDetail.php?sn=4475189&#34;&gt;Bahamut&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;使用Unity製作遊戲也好一陣子，&lt;/p&gt;
+&lt;p&gt;途中踩過不少坑都是對於Unity預設值與C#程式語言的設計上的不熟悉，&lt;/p&gt;
+&lt;p&gt;關於Unity預設值的部分，&lt;a href=&#34;https://www.slideshare.net/KelvinLo5/2019-unity-iii-tgdf&#34;&gt;達哥在今年的TGDF上的簡報&lt;/a&gt;讓我獲益良多，大家都該去看看。&lt;/p&gt;
+&lt;p&gt;這次想探討的是關於C#程式語言的設計方面，&lt;/p&gt;
+&lt;p&gt;特別是相對於C/C++這些低階語言來說，C#/Java的記憶體分配像是一個巨大的黑盒子，&lt;/p&gt;
+&lt;p&gt;運作起來還蠻順利的，但是時不時就會像樂高一樣踩到腳(而且很痛)，&lt;/p&gt;
+&lt;p&gt;這篇就來記錄一下自己學到的東西，順便討論裝箱(Boxing)跟C#的記憶體運作吧！&lt;/p&gt;"/>
+    <script type="application/ld+json">
+        {
+            "description": "&lt;p&gt;You can also see my post in &lt;a href=&#34;https://home.gamer.com.tw/creationDetail.php?sn=4475189&#34;&gt;Bahamut&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;使用Unity製作遊戲也好一陣子，&lt;/p&gt;
+&lt;p&gt;途中踩過不少坑都是對於Unity預設值與C#程式語言的設計上的不熟悉，&lt;/p&gt;
+&lt;p&gt;關於Unity預設值的部分，&lt;a href=&#34;https://www.slideshare.net/KelvinLo5/2019-unity-iii-tgdf&#34;&gt;達哥在今年的TGDF上的簡報&lt;/a&gt;讓我獲益良多，大家都該去看看。&lt;/p&gt;
+&lt;p&gt;這次想探討的是關於C#程式語言的設計方面，&lt;/p&gt;
+&lt;p&gt;特別是相對於C/C++這些低階語言來說，C#/Java的記憶體分配像是一個巨大的黑盒子，&lt;/p&gt;
+&lt;p&gt;運作起來還蠻順利的，但是時不時就會像樂高一樣踩到腳(而且很痛)，&lt;/p&gt;
+&lt;p&gt;這篇就來記錄一下自己學到的東西，順便討論裝箱(Boxing)跟C#的記憶體運作吧！&lt;/p&gt;",
+            "author": { "@type": "Person", "name": "Harrison Chen" },
+            "@type": "BlogPosting",
+            "url": "https://blog.harrison-chen.dev/2019/07/27/Game%20Programming/Memory%20Management%20in%20Game/index.html",
+            "publisher": {
+            "@type": "Organization",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://blog.harrison-chen.devundefined"
+            },
+            "name": "Harrison Chen"
+            },
+            "headline": "關於C#記憶體管理那些事。 | Haox Land",
+            "datePublished": "2019-07-27T17:51:53.000Z",
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": "https://blog.harrison-chen.dev/2019/07/27/Game%20Programming/Memory%20Management%20in%20Game/index.html"
+            },
+            "@context": "http://schema.org"
+        }
+    </script>
+
+
+
+
+    
+
+    
+
+    
+
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+
+    
+
+    
+
+    
+
+    
+<link rel="stylesheet" href="/dist/build.css?v=1654266144177.css">
+
+
+    
+<link rel="stylesheet" href="/dist/custom.css?v=1654266144177.css">
+
+
+    <script>
+        window.isPost = true
+        window.aomori = {
+            
+            
+            
+        }
+        window.aomori_logo_typed_animated = true
+        window.aomori_search_algolia = false
+
+    </script>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"><!-- hexo-inject:begin --><!-- hexo-inject:end --></head>
+
+<body>
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container">
+    <header class="header">
+        <div class="header-type">
+            
+            <div class="header-type-inner">
+                
+                    <div id="typed-strings" style="display:none">
+                        <p>Haox Land</p>
+                    </div>
+                    <a class="header-type-title" id="typed" href="/"></a>
+                
+    
+                
+            </div>
+        </div>
+        <div class="header-menu">
+            <div class="header-menu-inner">
+                
+                <a href="/">Home</a>
+                
+                <a href="/About">About</a>
+                
+            </div>
+            <div class="header-menu-social">
+                
+    <a class="social" target="_blank" href="https://github.com/Harrison-Dev">
+        <ion-icon name="logo-github"></ion-icon>
+    </a>
+
+    <a class="social" target="_blank" href="https://www.linkedin.com/in/harrison-chen-tw">
+        <ion-icon name="logo-linkedin"></ion-icon>
+    </a>
+
+    <a class="social" target="_blank" href="https://twitter.com/HaoCooLLL">
+        <ion-icon name="logo-twitter"></ion-icon>
+    </a>
+
+            </div>
+        </div>
+
+        <div class="header-menu-mobile">
+            <div class="header-menu-mobile-inner" id="mobile-menu-open">
+                <i class="icon icon-menu"></i>
+            </div>
+        </div>
+    </header>
+
+    <div class="header-menu-mobile-menu">
+        <div class="header-menu-mobile-menu-bg"></div>
+        <div class="header-menu-mobile-menu-wrap">
+            <div class="header-menu-mobile-menu-inner">
+                <div class="header-menu-mobile-menu-close" id="mobile-menu-close">
+                    <i class="icon icon-cross"></i>
+                </div>
+                <div class="header-menu-mobile-menu-list">
+                    
+                    <a href="/">Home</a>
+                    
+                    <a href="/About">About</a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+    <div class="container">
+        <div class="main">
+            <section class="inner">
+                <section class="inner-main">
+                    <div class="post">
+    <article id="post-cmj33hjjh000arg298qqx4r52" class="article article-type-post" itemscope
+    itemprop="blogPost">
+
+    <div class="article-inner">
+
+        
+          
+        
+        
+        
+
+        
+        <header class="article-header">
+            
+  
+    <h1 class="article-title" itemprop="name">
+      關於C#記憶體管理那些事。
+    </h1>
+  
+
+        </header>
+        
+
+        <div class="article-more-info article-more-info-post hairline">
+
+            <div class="article-date">
+  <time datetime="2019-07-27T17:51:53.000Z" itemprop="datePublished">2019-07-28</time>
+</div>
+
+            
+            <div class="article-category">
+                <a class="article-category-link" href="/categories/Game-Programming/">Game Programming</a>
+            </div>
+            
+
+            
+            <div class="article-tag">
+                <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C-Programming-Language/" rel="tag">C# Programming Language</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Computer-Orgnization/" rel="tag">Computer Orgnization</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Memory-Management/" rel="tag">Memory Management</a></li></ul>
+            </div>
+            
+
+            
+            <div class="article-busuanzi">
+                <span id="busuanzi_value_page_pv">N</span> 人看过
+            </div>
+            
+
+        </div>
+
+        <div class="article-entry post-inner-html hairline" itemprop="articleBody">
+            <p>You can also see my post in <a target="_blank" rel="noopener" href="https://home.gamer.com.tw/creationDetail.php?sn=4475189">Bahamut</a>.</p>
+<p>使用Unity製作遊戲也好一陣子，</p>
+<p>途中踩過不少坑都是對於Unity預設值與C#程式語言的設計上的不熟悉，</p>
+<p>關於Unity預設值的部分，<a target="_blank" rel="noopener" href="https://www.slideshare.net/KelvinLo5/2019-unity-iii-tgdf">達哥在今年的TGDF上的簡報</a>讓我獲益良多，大家都該去看看。</p>
+<p>這次想探討的是關於C#程式語言的設計方面，</p>
+<p>特別是相對於C/C++這些低階語言來說，C#/Java的記憶體分配像是一個巨大的黑盒子，</p>
+<p>運作起來還蠻順利的，但是時不時就會像樂高一樣踩到腳(而且很痛)，</p>
+<p>這篇就來記錄一下自己學到的東西，順便討論裝箱(Boxing)跟C#的記憶體運作吧！</p>
+<span id="more"></span>
+<h2 id="一、C-的記憶體分配"><a href="#一、C-的記憶體分配" class="headerlink" title="一、C#的記憶體分配"></a><strong>一、C#的記憶體分配</strong></h2><p>由於看到文章的朋友，可能不一定對程式語言的一些處理非常孰悉，</p>
+<p>所以在這邊先簡單整理關於C#記憶體分配的一些規則。</p>
+<p>對C#來說，一個Class分成三種類型：</p>
+<ol>
+<li>Value Type 2. Reference Type 3. Pointer Type</li>
+</ol>
+<p>其中第三項要開啟unsafe才能夠使用，而Unity的預設值是關閉的，所以可以先不理它。</p>
+<p>前兩項Value Type跟Reference Type，在MSDN的官方說明上是這樣的：</p>
+<p>Value types are either stack-allocated or allocated inline in a structure.<br>Reference types are heap-allocated</p>
+<p>可以了解到，</p>
+<p>對於Value Type來說，一般是存放在STACK段，做為區域變數使用。</p>
+<p>對於Reference Type來說，一般是存放在HEAP段，由C#的Garbage Collection控管。</p>
+<p>(當然這樣簡單的分類未必完全正確，因為他們其實存在<a target="_blank" rel="noopener" href="https://blogs.msdn.microsoft.com/ericlippert/2009/04/27/the-stack-is-an-implementation-detail-part-one/">一些實作細節的不同</a>)</p>
+<p>簡單來說：</p>
+<p><strong>Value Type</strong>就是一般常用的int, float, char, struct, enum這種簡單的資料型態，</p>
+<p>他們在一般情況通常是區域變數，也就是用完就丟的，對記憶體的消耗也不會太大。</p>
+<p><strong>Reference Type</strong>就是利用class包裝起來的資料了，他們會被整包放到動態記憶體裡面，</p>
+<p>如果不特別處理，就會持續占用記憶體，當相關的程式使用完這些變數，</p>
+<p>C#就會利用<strong>Garbage Collection</strong>的方法，回收這些用不到的記憶體，</p>
+<p>在Collect的當下會消耗較多CPU資源，甚至在手機上有可能會導致掉幀的情況，</p>
+<p>所以我們一般會希望迴避這種動態記憶體的分配能夠有所節制，</p>
+<p>也是前幾篇文章所提到的物件池存在的一部份原因。</p>
+<h2 id="二、萬惡的Boxing跟Unboxing"><a href="#二、萬惡的Boxing跟Unboxing" class="headerlink" title="二、萬惡的Boxing跟Unboxing"></a><strong>二、萬惡的Boxing跟Unboxing</strong></h2><p>介紹完兩種C#的記憶體分配方式之後，再回頭討論標題的Boxing究竟是什麼意思吧。</p>
+<p>在寫遊戲程式的時候，常常會遇到一種狀況：</p>
+<p>「需要把現在的數值記錄下來，做為某種用途」</p>
+<p>這種情況，我們常常會宣告一個class，像是下面這種存檔用的資訊：</p>
+<p><img src="https://i.imgur.com/aWNJodO.png" alt="sd"></p>
+<p>在使用上，我們通常會寫成：</p>
+<p><img src="https://i.imgur.com/oPD7LRT.png" alt="sd"></p>
+<p>這種形式，此時原本存在區域變數的level跟health，就需要複製一份到動態變數區，</p>
+<p>並且包裝成SaveFile的形式一直存在於動態變數區，直到它被使用完畢，被GC給回收去。</p>
+<p>這樣<strong>從區域變數(Value Type)</strong>被打包到<strong>動態變數區段(HEAP段)</strong>，就被稱為<strong>Boxing(裝箱)</strong>。</p>
+<p>反過來從<strong>動態變數區段</strong>擷取成<strong>區域變數(Value Type)</strong>就被稱為<strong>Unboxing(拆箱)</strong>。</p>
+<h2 id="三、總結"><a href="#三、總結" class="headerlink" title="三、總結"></a>三、總結</h2><p>其實Boxing跟Unboxing在寫程式的時候幾乎是難以完全避免的，</p>
+<p>我們只要記得盡量少使用裝拆箱，以及在使用ArrayList, HashTable這種</p>
+<p>一放進去就會被轉型成object type的自動裝箱結構時，要務必小心使用。</p>
+<p>另外就是盡量在不忙碌的時候(打開UI選單、暫停遊戲、或讀取關卡時)，</p>
+<p>手動呼叫System.GC.Collect()進行手動GC，勢必可以稍微減少GC回收對效能造成的影響囉！</p>
+<p>參考資料：<br><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-tw/dotnet/csharp/programming-guide/types/boxing-and-unboxing">https://docs.microsoft.com/zh-tw/dotnet/csharp/programming-guide/types/boxing-and-unboxing</a><br><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-tw/dotnet/standard/garbage-collection/fundamentals">https://docs.microsoft.com/zh-tw/dotnet/standard/garbage-collection/fundamentals</a><br><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-tw/dotnet/api/system.valuetype?view=netframework-4.8">https://docs.microsoft.com/zh-tw/dotnet/api/system.valuetype?view=netframework-4.8</a><br><a target="_blank" rel="noopener" href="http://dev.yesky.com/msdn/359/3486359.shtml">http://dev.yesky.com/msdn/359/3486359.shtml</a></p>
+
+        </div>
+
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+<nav class="article-nav">
+  
+    <a href="/2019/11/01/Game%20Mathematics/Introduction%20to%20Game%20Rotation/" id="article-nav-newer" class="article-nav-link-wrap">
+      <div class="article-nav-caption">下一篇</div>
+      <div class="article-nav-title">
+        
+          Introduction to Game Rotation
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/02/08/Game%20Implementations/Multiplayer%20Camera/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-caption">上一篇</div>
+      <div class="article-nav-title">實作分享 - 攝影機捕捉多角色</div>
+    </a>
+  
+</nav>
+
+
+    <section class="share">
+        <div class="share-title">分享</div>
+        <a class="share-item" target="_blank"
+            href="https://twitter.com/share?text=關於C#記憶體管理那些事。 - Haox Land&url=https%3A%2F%2Fblog.harrison-chen.dev%2F2019%2F07%2F27%2FGame%2520Programming%2FMemory%2520Management%2520in%2520Game%2F">
+            <ion-icon name="logo-twitter"></ion-icon>
+        </a>
+        <a class="share-item" target="_blank"
+            href="https://www.facebook.com/sharer.php?title=關於C#記憶體管理那些事。 - Haox Land&u=https%3A%2F%2Fblog.harrison-chen.dev%2F2019%2F07%2F27%2FGame%2520Programming%2FMemory%2520Management%2520in%2520Game%2F">
+            <ion-icon name="logo-facebook"></ion-icon>
+        </a>
+        <!-- <a class="share-item" target="_blank"
+            href="https://service.weibo.com/share/share.php?title=關於C#記憶體管理那些事。 - Haox Land&url=https://blog.harrison-chen.dev/2019/07/27/Game%20Programming/Memory%20Management%20in%20Game/&pic=">
+            <div class="n-icon n-icon-weibo"></div>
+        </a> -->
+    </section>
+
+</article>
+
+
+
+
+<section class="comments comments-disqus">
+    <div id="disqus_thread"></div>
+    <script>
+        ;(function () {
+            // DON'T EDIT BELOW THIS LINE
+            var d = document,
+                s = d.createElement('script')
+            s.src =
+                'https://harrison0628.disqus.com/embed.js'
+            s.setAttribute('data-timestamp', +new Date())
+            ;(d.head || d.body).appendChild(s)
+        })()
+    </script>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</div>
+                </section>
+            </section>
+
+            
+            <aside class="sidebar ">
+                
+
+
+<div class="widget" id="widget">
+    
+      
+  <div class="widget-wrap">
+    <div class="widget-inner">
+      <div class="toc post-toc-html"></div>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget-wrap widget-cate">
+    <div class="widget-title"><span>Categories</span></div>
+    <div class="widget-inner">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Game-Implementations/">Game Implementations</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Game-Mathematics/">Game Mathematics</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Game-Physics/">Game Physics</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Game-Programming/">Game Programming</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Software-Development/">Software Development</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Unity/">Unity</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/travel/">travel</a></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget-wrap widget-tags">
+    <div class="widget-title"><span>Tags</span></div>
+    <div class="widget-inner">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Backend/" rel="tag">Backend</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Basic/" rel="tag">Basic</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-Programming-Language/" rel="tag">C# Programming Language</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Camera/" rel="tag">Camera</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Computer-Orgnization/" rel="tag">Computer Orgnization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Data-Structure/" rel="tag">Data Structure</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Fun/" rel="tag">Fun</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Game-Math/" rel="tag">Game Math</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Game-Physics/" rel="tag">Game Physics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Memory-Management/" rel="tag">Memory Management</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Operating-System/" rel="tag">Operating System</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Programming-Tips/" rel="tag">Programming Tips</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Software-Development/" rel="tag">Software Development</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Unity/" rel="tag">Unity</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/game-development/" rel="tag">game development</a></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget-wrap widget-recent-posts">
+    <div class="widget-title"><span>Recent Posts</span></div>
+    <div class="widget-inner">
+      <ul>
+        
+          <li>
+            <a href="/2024/12/14/vps%E5%BF%83%E5%BE%97%EF%BC%86%E9%83%A8%E7%BD%B2%E4%B8%80%E4%BA%9B%E5%B7%A5%E5%85%B7%E6%84%9F%E6%83%B3/">vps心得＆部署一些工具感想</a>
+          </li>
+        
+          <li>
+            <a href="/2023/09/10/Travel/%E4%BA%AC%E9%83%BDBitSummit%E9%81%8A%E8%A8%98/">京都BitSummit遊記</a>
+          </li>
+        
+          <li>
+            <a href="/2022/07/27/Game%20Programming/Fiber%20Job%20System/">Fiber based job system</a>
+          </li>
+        
+          <li>
+            <a href="/2021/09/05/Unity/UniTask/">UniTask：利用async/await優雅的撰寫callback</a>
+          </li>
+        
+          <li>
+            <a href="/2020/04/25/Game%20Physics/Physics%20Constraint/">Game Physics - Constraint</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget-wrap widget-archive">
+    <div class="widget-title"><span>Archive</span></div>
+    <div class="widget-inner">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/">2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/">2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/">2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/">2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/">2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/">2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/">2018</a></li></ul>
+    </div>
+  </div>
+
+
+    
+</div>
+
+<div id="backtop"><i class="icon icon-arrow-up"></i></div>
+            </aside>
+            
+        </div>
+    </div>
+
+    <footer class="footer">
+    <div class="footer-wave">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#3c4859" fill-opacity="1" d="M0,160L60,181.3C120,203,240,245,360,240C480,235,600,181,720,186.7C840,192,960,256,1080,261.3C1200,267,1320,213,1380,186.7L1440,160L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path></svg>
+    </div>
+
+    <!-- Please do not remove this -->
+    <!-- 开源不易，请勿删除 -->
+    <div class="footer-wrap">
+        <div class="footer-inner"> 
+            Haox Land &copy; 2025<br>
+            Powered By Hexo · Theme By <a href="https://linhong.me/" target="_blank">Aomori</a> · <a href="https://github.com/lh1me/hexo-theme-aomori" target="_blank">Github</a>
+        </div>
+    </div>
+
+</footer>
+
+<script type="module" src="https://unpkg.com/ionicons@6.0.2/dist/ionicons/ionicons.esm.js"></script>
+
+
+
+
+
+
+<script src="/dist/build.js?1654266144177.js"></script>
+
+
+<script src="/dist/custom.js?1654266144177.js"></script>
+
+
+
+
+
+<!-- Google Analytics-->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-K056ZHDF24"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-K056ZHDF24');
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+
+
+
+
+
+
+
+</body>
+
+</html>
