@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon.ico">
+  <link rel="mask-icon" href="/img/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.harrison-chen.dev","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":false,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":true}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="最近因為朋友的surfshark到期了，加上自己想獲得一個連線到日本的節點，以及希望有一個public ip可以拿來建立一些web service，上網研究了一下購入了日本的VPS服務。 在一篇講馬娘如何繞過cygames的檢查的巴哈文章裡面看到了 WebArena Indigo ，一個月只要400多日幣就可以開一台VPS （spec如下，少的可憐 ＱＱ）對於我目前的需求來說還是蠻夠用了。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vps心得＆部署一些工具感想">
+<meta property="og:url" content="https://blog.harrison-chen.dev/2024/12/14/vps%E5%BF%83%E5%BE%97%EF%BC%86%E9%83%A8%E7%BD%B2%E4%B8%80%E4%BA%9B%E5%B7%A5%E5%85%B7%E6%84%9F%E6%83%B3/index.html">
+<meta property="og:site_name" content="Haox Land">
+<meta property="og:description" content="最近因為朋友的surfshark到期了，加上自己想獲得一個連線到日本的節點，以及希望有一個public ip可以拿來建立一些web service，上網研究了一下購入了日本的VPS服務。 在一篇講馬娘如何繞過cygames的檢查的巴哈文章裡面看到了 WebArena Indigo ，一個月只要400多日幣就可以開一台VPS （spec如下，少的可憐 ＱＱ）對於我目前的需求來說還是蠻夠用了。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://blog.harrison-chen.dev/img/vps%E5%BF%83%E5%BE%97%EF%BC%86%E9%83%A8%E7%BD%B2%E4%B8%80%E4%BA%9B%E5%B7%A5%E5%85%B7%E6%84%9F%E6%83%B3/img_1.png">
+<meta property="article:published_time" content="2024-12-14T17:44:38.000Z">
+<meta property="article:modified_time" content="2026-01-18T16:58:12.060Z">
+<meta property="article:author" content="Harrison Chen">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Docker">
+<meta property="article:tag" content="Software Development">
+<meta property="article:tag" content="Backend">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.harrison-chen.dev/img/vps%E5%BF%83%E5%BE%97%EF%BC%86%E9%83%A8%E7%BD%B2%E4%B8%80%E4%BA%9B%E5%B7%A5%E5%85%B7%E6%84%9F%E6%83%B3/img_1.png">
+
+
+<link rel="canonical" href="https://blog.harrison-chen.dev/2024/12/14/vps%E5%BF%83%E5%BE%97%EF%BC%86%E9%83%A8%E7%BD%B2%E4%B8%80%E4%BA%9B%E5%B7%A5%E5%85%B7%E6%84%9F%E6%83%B3/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://blog.harrison-chen.dev/2024/12/14/vps%E5%BF%83%E5%BE%97%EF%BC%86%E9%83%A8%E7%BD%B2%E4%B8%80%E4%BA%9B%E5%B7%A5%E5%85%B7%E6%84%9F%E6%83%B3/","path":"2024/12/14/vps心得＆部署一些工具感想/","title":"vps心得＆部署一些工具感想"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>vps心得＆部署一些工具感想 | Haox Land</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-K056ZHDF24"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"G-K056ZHDF24","only_pageview":false,"measure_protocol_api_secret":null}</script>
+  <script src="/js/third-party/analytics/google-analytics.js" defer></script>
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/pjax.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Haox Land" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Haox Land</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/About/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-rss"><a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="Searching..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Instance%E9%81%B8%E6%93%87%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">Instance選擇？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A6%96%E5%85%88%E6%8B%BF%E4%BE%86%E5%B9%B9%E5%98%9B"><span class="nav-number">2.</span> <span class="nav-text">首先拿來幹嘛</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2%E4%BA%86%E4%BB%80%E9%BA%BC%E6%9C%8D%E5%8B%99"><span class="nav-number">3.</span> <span class="nav-text">部署了什麼服務</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TW-forum-feed-%E5%8C%96%E5%A4%A7%E4%BD%9C%E6%88%B0"><span class="nav-number">3.1.</span> <span class="nav-text">TW forum feed 化大作戰</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RSS-feed-telegram-bot"><span class="nav-number">3.2.</span> <span class="nav-text">RSS feed telegram bot</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Nuget-To-Unitypackage-%E6%9C%8D%E5%8B%99"><span class="nav-number">3.3.</span> <span class="nav-text">Nuget To Unitypackage 服務</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E9%83%A8%E7%BD%B2%E5%95%8F%E9%A1%8C"><span class="nav-number">3.4.</span> <span class="nav-text">其他部署問題</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A5%E4%B8%8B%E4%BE%86%E8%A6%81%E5%81%9A%E4%BB%80%E9%BA%BC"><span class="nav-number">4.</span> <span class="nav-text">接下來要做什麼</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Harrison Chen"
+      src="/img/avatar.png">
+  <p class="site-author-name" itemprop="name">Harrison Chen</p>
+  <div class="site-description" itemprop="description">A tiny game developer, most time as game programmer.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Harrison-Dev" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Harrison-Dev" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/HaoCooLLL" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;HaoCooLLL" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.linkedin.com/in/harrison-chen-tw" title="LinkedIn → https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;harrison-chen-tw" rel="noopener me" target="_blank"><i class="fab fa-linkedin fa-fw"></i>LinkedIn</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://blog.harrison-chen.dev/2024/12/14/vps%E5%BF%83%E5%BE%97%EF%BC%86%E9%83%A8%E7%BD%B2%E4%B8%80%E4%BA%9B%E5%B7%A5%E5%85%B7%E6%84%9F%E6%83%B3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/avatar.png">
+      <meta itemprop="name" content="Harrison Chen">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Haox Land">
+      <meta itemprop="description" content="A tiny game developer, most time as game programmer.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="vps心得＆部署一些工具感想 | Haox Land">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          vps心得＆部署一些工具感想
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-12-15 01:44:38" itemprop="dateCreated datePublished" datetime="2024-12-15T01:44:38+08:00">2024-12-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2026-01-19 00:58:12" itemprop="dateModified" datetime="2026-01-19T00:58:12+08:00">2026-01-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Software-Development/" itemprop="url" rel="index"><span itemprop="name">Software Development</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus: </span>
+    
+    <a title="disqus" href="/2024/12/14/vps%E5%BF%83%E5%BE%97%EF%BC%86%E9%83%A8%E7%BD%B2%E4%B8%80%E4%BA%9B%E5%B7%A5%E5%85%B7%E6%84%9F%E6%83%B3/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2024/12/14/vps心得＆部署一些工具感想/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p><br/></p>
+<p>最近因為朋友的surfshark到期了，加上自己想獲得一個連線到日本的節點，以及希望有一個public ip可以拿來建立一些web service，上網研究了一下購入了日本的VPS服務。</p>
+<p>在一篇講馬娘如何繞過cygames的檢查的巴哈文章裡面看到了 <a target="_blank" rel="noopener" href="https://web.arena.ne.jp/indigo/">WebArena Indigo</a> ，一個月只要400多日幣就可以開一台VPS （spec如下，少的可憐 ＱＱ）對於我目前的需求來說還是蠻夠用了。</p>
+<p><img data-src="/img/vps心得＆部署一些工具感想/img_1.png" alt="image"></p>
+<span id="more"></span>
+<p><br/></p>
+<h2 id="Instance選擇？"><a href="#Instance選擇？" class="headerlink" title="Instance選擇？"></a>Instance選擇？</h2><p>因為WebArena蠻多中國的文章都有詳述，開instance的介面說實在也蠻單純的，這邊就直接跳過開機的步驟（我也沒截圖 嘻嘻）。</p>
+<p>機器本身就是一台qemu/kvm，可以選centos/ubuntu等常見的distrubtion，似乎也有windows server的選項，但想到license的溢價，對我個人來說是完全沒考慮過，就一台vps打天下吧！</p>
+<p>另外平台也有提供snapshot功能，但snapshot也要依照儲存時間計費，實在太不划算了，趕緊弄一弄自己的IaC做自動部署環境那些，感覺還比較實際。</p>
+<p><br/></p>
+<h2 id="首先拿來幹嘛"><a href="#首先拿來幹嘛" class="headerlink" title="首先拿來幹嘛"></a>首先拿來幹嘛</h2><p>我個人的使用目的第一號，是想要一個日本的網路節點可以拿來看一些日本動畫之類的（動畫瘋不是什麼都有），但大家也知道日本的網路服務非常的鎖國外IP，甚至三大csp/oracle的都被ban光光，更別說那些每天看得到廣告的vpn品牌可以說是完全不用想拿來看任何日本網站。</p>
+<p>所以首先就使用這邊開的instance來嘗試連線，很幸運的沒有在我想使用的服務的block list中，順利用100多台幣獲得一台好夥伴。</p>
+<p><br/></p>
+<h2 id="部署了什麼服務"><a href="#部署了什麼服務" class="headerlink" title="部署了什麼服務"></a>部署了什麼服務</h2><h3 id="TW-forum-feed-化大作戰"><a href="#TW-forum-feed-化大作戰" class="headerlink" title="TW forum feed 化大作戰"></a>TW forum feed 化大作戰</h3><p>在去年開啟了gcp試用的期間，我使用golang簡單寫了一些cloud function拿來做ptt/噗浪的貼文feed化，repo在這邊<a target="_blank" rel="noopener" href="https://github.com/Harrison-Dev/go_feed_tool">go-feed-tool</a>原本是使用cloud function形式，試用了<a target="_blank" rel="noopener" href="https://www.cursor.com/">Cursor</a>來進行web server的改版，用起來還挺得心應手，大約在半小時～一小時的區間就成功部署成為web server app，還做了一些功能的調整更新。</p>
+<p><br/></p>
+<h3 id="RSS-feed-telegram-bot"><a href="#RSS-feed-telegram-bot" class="headerlink" title="RSS feed telegram bot"></a>RSS feed telegram bot</h3><p>因為我個人和交友圈，最常使用的social app其實是telegram，telegram有著碾壓其他社群軟體的跨平台同步速度，更扯的是他的bot是完全不用收錢，為了讓自己更方便「被動」獲取一些論壇資訊（真的花太多時間滑PTT= =）我使用了公開repo <a target="_blank" rel="noopener" href="https://github.com/Rongronggg9/RSS-to-Telegram-Bot">RSS-To-Telegram-Bot</a>，部署到自己的機器上，在做for個人的RSS通知機器人。</p>
+<p>順帶一提這個作者也有一個共同使用的bot公開，但為了自己rss註冊表資料的可控、隱私、還有爬文web app說實在也不想隨便暴露，所以自己建在自己機器上對我來說比較適合一些。</p>
+<p><br/></p>
+<h3 id="Nuget-To-Unitypackage-服務"><a href="#Nuget-To-Unitypackage-服務" class="headerlink" title="Nuget To Unitypackage 服務"></a>Nuget To Unitypackage 服務</h3><p>使用Unity的時候，如果想使用nuget的package(例如大家都愛的Newtonsoft.Json)其實是一件相當麻煩的苦差事，現在大部分使用 <a target="_blank" rel="noopener" href="https://github.com/GlitchEnzo/NuGetForUnity">NuGetForUnity</a> 專案來管控下載以及dependency等，但有時候只是想單獨使用某一包，也不想安裝這個專案（有時候覺得太過龐大），所以簡單做了一個web service + executable的程式，可以使用nuget下載package，自動選擇對unity專案較為適合的target，建立asmdef的關聯，最後打包成unitypackage可以一鍵置入專案。</p>
+<p>專案在這：<a target="_blank" rel="noopener" href="https://github.com/Harrison-Dev/nuget-2-dll-go">nuget-2-dll-go</a></p>
+<p>值得一提的是，在部署這個服務的時候遇到蠻多問題，第一個是目前前面的服務docker image都是基於alpine就可以運行，但這個專案因為需要nuget，使用debian會是相對穩定的執行環境，所以程式在build的時候雖然一樣基於golang的alpine環境建立，但執行環境我選擇了debian:bullseye-slim，沒想到才是噩夢的開始…</p>
+<p>首先是因為其他docker-compose都在正常進行中，所以機器本來記憶體就所剩不多，在安裝debian的nuget的時候又會調用到蠻大量的記憶體，結果我這台只有1G記憶體的vps直接吃不消，被out of memory killer砍翻了，機器當掉好幾次。</p>
+<p>後來開著htop同時監督，才發現這個階段記憶體完全用到超過90%，後面是不可能完成的，還好這vps雖小還是給了20GB的SSD，趕緊的切了2GB當swap file，才真的成功部署到機器上（kernal版本不給我跑zram orz，不然真的不太想直接開到swap file）。</p>
+<h3 id="其他部署問題"><a href="#其他部署問題" class="headerlink" title="其他部署問題"></a>其他部署問題</h3><p>因為這期間我也購入了自己的domain name，所以用了traefik來做簡易的LB/reverse proxy，把這些服務都分到不同的subdomain去。</p>
+<p>結果發現Cloudflare的dns，好像會自動上https，所以處理CA憑證那邊也花了快半小時左右，才成功把這些service公開出來讓自己的rss reader使用。</p>
+<p><br/></p>
+<h2 id="接下來要做什麼"><a href="#接下來要做什麼" class="headerlink" title="接下來要做什麼"></a>接下來要做什麼</h2><p>目前還在想有什麼服務可以部署，但作為一個遊戲開發者，感覺自己應該要開始拓展多人遊戲的開發技能了。</p>
+<p>這個機器小到離譜，所以如果拿來做relay server感覺可能會翻車，目前構想應該是做簡單的match-making/lobby，然後打通STUN之後讓玩家們直接nat punchthrough來連線？ 不曉得unity netcode有沒有別人寫好的套件可用，Unity自己要賣Cloud Service的Relay Server，感覺肯定不會推薦用p2p遊玩 lul。</p>
+<p><br/></p>
+<p>總之最近買了vps/domain name等，又複習了一大堆linux admin的設定，還有現代雲的一些常用工具等等，接下來如果可以蹭到一些oracle的機器，感覺可以開始導入一些Terraform之類的IaC之類的來做自動化部署etc。</p>
+<p>後端技能樹越點越多的Game Programmer是不是搞錯了什麼？ 為了自清自己是Game Programmer指好放一下自己上電視的片段已證清白 ｈａｈａ</p>
+<div id="wrap">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/RLgXk2xy79c?si=C6IK0kDtmsGzyqDO&amp;start=496" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="followme">
+  <span>Welcome to my other publishing channels</span>
+
+  <div class="social-list">
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+      </div>
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/Docker/" rel="tag"># Docker</a>
+              <a href="/tags/Software-Development/" rel="tag"># Software Development</a>
+              <a href="/tags/Backend/" rel="tag"># Backend</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/09/10/Travel/%E4%BA%AC%E9%83%BDBitSummit%E9%81%8A%E8%A8%98/" rel="prev" title="京都BitSummit遊記">
+                  <i class="fa fa-angle-left"></i> 京都BitSummit遊記
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2026/01/18/%E6%89%93%E9%80%A0self%20host%E7%9A%84%E7%AC%AC%E4%BA%8C%E5%A4%A7%E8%85%A6/" rel="next" title="打造self host的第二大腦">
+                  打造self host的第二大腦 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Harrison Chen</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"harrison0628","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js" defer></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

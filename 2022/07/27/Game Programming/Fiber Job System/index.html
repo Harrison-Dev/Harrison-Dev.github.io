@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon.ico">
+  <link rel="mask-icon" href="/img/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.harrison-chen.dev","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":false,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":true}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Preface工作上使用unity開發遊戲時，在效能有瓶頸的區塊時常會使用到Job System來提升效能，去年因為興趣使然稍微研究了Job System的底層實作，在公司內部報告使用過，藉著最近有點時間將這些資訊整理起來發成部落格文章。 寫完之後回頭來看，必須先提醒一下，這篇會使用到相當多作業系統的背景知識，建議讀者需要先具備作業系統的基礎再做閱讀。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fiber based job system">
+<meta property="og:url" content="https://blog.harrison-chen.dev/2022/07/27/Game%20Programming/Fiber%20Job%20System/index.html">
+<meta property="og:site_name" content="Haox Land">
+<meta property="og:description" content="Preface工作上使用unity開發遊戲時，在效能有瓶頸的區塊時常會使用到Job System來提升效能，去年因為興趣使然稍微研究了Job System的底層實作，在公司內部報告使用過，藉著最近有點時間將這些資訊整理起來發成部落格文章。 寫完之後回頭來看，必須先提醒一下，這篇會使用到相當多作業系統的背景知識，建議讀者需要先具備作業系統的基礎再做閱讀。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://blog.harrison-chen.dev/img/FiberJob/job_schedule.png">
+<meta property="og:image" content="https://blog.harrison-chen.dev/img/FiberJob/ftl_context_switching.png">
+<meta property="og:image" content="https://blog.harrison-chen.dev/img/FiberJob/ftl_caller.png">
+<meta property="og:image" content="https://blog.harrison-chen.dev/img/FiberJob/ftl_function.png">
+<meta property="og:image" content="https://blog.harrison-chen.dev/img/FiberJob/ftl_callee.png">
+<meta property="og:image" content="https://blog.harrison-chen.dev/img/FiberJob/single_core_boid.png">
+<meta property="og:image" content="https://blog.harrison-chen.dev/img/FiberJob/jobify_boid.png">
+<meta property="article:published_time" content="2022-07-27T17:51:53.000Z">
+<meta property="article:modified_time" content="2026-01-18T16:58:12.059Z">
+<meta property="article:author" content="Harrison Chen">
+<meta property="article:tag" content="Computer Orgnization">
+<meta property="article:tag" content="Operating System">
+<meta property="article:tag" content="C++">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.harrison-chen.dev/img/FiberJob/job_schedule.png">
+
+
+<link rel="canonical" href="https://blog.harrison-chen.dev/2022/07/27/Game%20Programming/Fiber%20Job%20System/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://blog.harrison-chen.dev/2022/07/27/Game%20Programming/Fiber%20Job%20System/","path":"2022/07/27/Game Programming/Fiber Job System/","title":"Fiber based job system"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Fiber based job system | Haox Land</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-K056ZHDF24"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"G-K056ZHDF24","only_pageview":false,"measure_protocol_api_secret":null}</script>
+  <script src="/js/third-party/analytics/google-analytics.js" defer></script>
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/pjax.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Haox Land" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Haox Land</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/About/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-rss"><a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="Searching..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Preface"><span class="nav-number">1.</span> <span class="nav-text">Preface</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#What-is-Job-System"><span class="nav-number">2.</span> <span class="nav-text">What is Job System</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Naive-Job-System-Structure"><span class="nav-number">2.1.</span> <span class="nav-text">Naive Job System Structure</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Fiber"><span class="nav-number">3.</span> <span class="nav-text">Fiber</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#About-Fiber-based-Job-System"><span class="nav-number">3.1.</span> <span class="nav-text">About Fiber-based Job System</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#What-is-Fiber"><span class="nav-number">3.2.</span> <span class="nav-text">What is Fiber?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fiber-%E7%9A%84%E5%AF%A6%E4%BD%9C"><span class="nav-number">3.3.</span> <span class="nav-text">Fiber 的實作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FTL-fiber-based-tasking-library"><span class="nav-number">4.</span> <span class="nav-text">FTL (fiber-based tasking library)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FTL-%E7%9A%84-Fiber-%E5%AF%A6%E4%BD%9C"><span class="nav-number">5.</span> <span class="nav-text">FTL 的 Fiber 實作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8FTL"><span class="nav-number">5.1.</span> <span class="nav-text">如何使用FTL</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%A6%E4%BD%9C"><span class="nav-number">6.</span> <span class="nav-text">實作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">7.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Harrison Chen"
+      src="/img/avatar.png">
+  <p class="site-author-name" itemprop="name">Harrison Chen</p>
+  <div class="site-description" itemprop="description">A tiny game developer, most time as game programmer.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Harrison-Dev" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Harrison-Dev" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/HaoCooLLL" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;HaoCooLLL" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.linkedin.com/in/harrison-chen-tw" title="LinkedIn → https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;harrison-chen-tw" rel="noopener me" target="_blank"><i class="fab fa-linkedin fa-fw"></i>LinkedIn</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://blog.harrison-chen.dev/2022/07/27/Game%20Programming/Fiber%20Job%20System/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/avatar.png">
+      <meta itemprop="name" content="Harrison Chen">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Haox Land">
+      <meta itemprop="description" content="A tiny game developer, most time as game programmer.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Fiber based job system | Haox Land">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Fiber based job system
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-07-28 01:51:53" itemprop="dateCreated datePublished" datetime="2022-07-28T01:51:53+08:00">2022-07-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2026-01-19 00:58:12" itemprop="dateModified" datetime="2026-01-19T00:58:12+08:00">2026-01-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Game-Programming/" itemprop="url" rel="index"><span itemprop="name">Game Programming</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus: </span>
+    
+    <a title="disqus" href="/2022/07/27/Game%20Programming/Fiber%20Job%20System/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/07/27/Game Programming/Fiber Job System/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="Preface"><a href="#Preface" class="headerlink" title="Preface"></a>Preface</h2><p>工作上使用unity開發遊戲時，在效能有瓶頸的區塊時常會使用到Job System來提升效能，<br>去年因為興趣使然稍微研究了Job System的底層實作，在公司內部報告使用過，<br>藉著最近有點時間將這些資訊整理起來發成部落格文章。</p>
+<p>寫完之後回頭來看，必須先提醒一下，這篇會使用到<strong>相當多</strong>作業系統的背景知識，<br>建議讀者需要先具備作業系統的基礎再做閱讀。</p>
+<p><img data-src="/img/FiberJob/job_schedule.png" alt=""></p>
+<span id="more"></span>
+<h2 id="What-is-Job-System"><a href="#What-is-Job-System" class="headerlink" title="What is Job System"></a>What is Job System</h2><p>Job system是一種管理<strong>多執行緒(multi-thread)</strong>程式的封裝，藉由將執行的程式碼打包成一個個任務，來抽象化執行續本身的使用。</p>
+<p>Job System藉由管理一組 worker thread進行跨CPU core的資源使用，通常使用與CPU core數量相同的worker thread數量，來避免頻繁的上下文交換(context switching)所帶來的效能損失。(即使作業系統或其他程序可能會使用到一些核心的資源)</p>
+<p>Job System 藉由將 Job 推入一個 Queue (或是priority queue)，將他們依序放入worker thread執行，同時Job System會管理他們之間的依賴關係來確保 Job 依照邏輯順序進行。(像是NPC走到定點後，才開始進行巡邏)</p>
+<h3 id="Naive-Job-System-Structure"><a href="#Naive-Job-System-Structure" class="headerlink" title="Naive Job System Structure"></a>Naive Job System Structure</h3><ul>
+<li>Worker threads : 使用std::thread::hardware_concurrency() 獲得CPU核心數，生成對應數量worker thread</li>
+<li>Job queue : 由各個worker thread在空閒時自己抓取，所以需要是thread safe的資料結構</li>
+<li>Counter : 紀錄目前還在進行的job數量，可以使用 std::atomic</li>
+</ul>
+<h2 id="Fiber"><a href="#Fiber" class="headerlink" title="Fiber"></a>Fiber</h2><h3 id="About-Fiber-based-Job-System"><a href="#About-Fiber-based-Job-System" class="headerlink" title="About Fiber-based Job System"></a>About Fiber-based Job System</h3><p>Naughty Dog在<a target="_blank" rel="noopener" href="https://www.gdcvault.com/play/1022186/Parallelizing-the-Naughty-Dog-Engine">GDC 2015的演講</a>是提出這個實作並且推進遊戲使用的非常重要的一篇文章，非常推薦大家閱讀。</p>
+<h3 id="What-is-Fiber"><a href="#What-is-Fiber" class="headerlink" title="What is Fiber?"></a>What is Fiber?</h3><p>根據<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/procthread/fibers"> Microsoft Win32 的 Manaul</a> 所述:</p>
+<pre><code>A fiber is a unit of execution that must be manually scheduled by the application. 
+
+Fibers run in the context of the threads that schedule them.
+</code></pre><p>Fiber具有以下特性：</p>
+<ul>
+<li>一個小型的 thread，由使用者提供stack space，並且具有更小的 context，可以將register暫存在stack上</li>
+<li>由 worker thread 執行</li>
+<li>Cooperative (合作性) 的多執行緒執行，由fiber之間yield做切換，而不主動搶佔</li>
+<li>極小成本，不會有thread的context switching在fiber切換時發生 (只有register的save/load必然發生)，因為context都還在stack上</li>
+</ul>
+<p>同上所述，Fiber 之間的切換是使用yield進行，也就是所謂的cooperative scheduling，Fiber將這個cpu scheudling和context switching(kernel-space)的操作拉到使用者(user-space)進行，並且讓這些操作成為寫程式的基本步驟。<br>這使得工程師可以在多執行緒的程式設計中取得更多的操縱權。</p>
+<p>在各式各樣的語言中都有著類似的東西，更多時候被稱為<strong>User-space thread</strong>或是<strong>green thread(Ruby, Java)</strong>。</p>
+<p>有些語言也有著coroutine的概念，fiber和coroutine也有相當程度的相似，只不過coroutine通常是語言層級的概念，而fiber通常做為系統層(system-level)的概念存在。</p>
+<h3 id="Fiber-的實作"><a href="#Fiber-的實作" class="headerlink" title="Fiber 的實作"></a>Fiber 的實作</h3><p>Fiber的實作是在組合語言層級進行，將所需的register存放到對應的stack空間，再藉由jmp跳到其他的上下文執行。<br>如果沒有瘋到想自己實作，大可使用OS Support的Library來使用<br>例如：<a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-tw/windows/win32/procthread/fibers">Win32</a>、<a target="_blank" rel="noopener" href="https://pubs.opengroup.org/onlinepubs/7908799/xsh/ucontext.h.html">Unix</a>、<a target="_blank" rel="noopener" href="https://www.boost.org/doc/libs/1_76_0/libs/context/doc/html/index.html">boost/context</a></p>
+<h2 id="FTL-fiber-based-tasking-library"><a href="#FTL-fiber-based-tasking-library" class="headerlink" title="FTL (fiber-based tasking library)"></a>FTL (fiber-based tasking library)</h2><p>為了進行實作練習，我找到一個滿完整的fiber job system開源專案進行參考</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/RichieSams">RichieSams</a>/<a target="_blank" rel="noopener" href="https://github.com/RichieSams/FiberTaskingLib">FiberTaskingLib</a></p>
+<p>FTL使用上面提到的boost作為fiber的實作</p>
+<h2 id="FTL-的-Fiber-實作"><a href="#FTL-的-Fiber-實作" class="headerlink" title="FTL 的 Fiber 實作"></a>FTL 的 Fiber 實作</h2><p>Yield to other task</p>
+<p>分成兩個區塊進行，如圖：<br><img data-src="/img/FiberJob/ftl_context_switching.png" alt=""></p>
+<p>第一部分是使用boost/context的api，將context打包成fiber bundle，儲存到stack上，並且將目前的task丟進等待 queue 中</p>
+<p>第二部分則是從queue中找尋目前等候執行的task，將他填入目前的TLS (thread local storage)</p>
+<p>最後使用fiber api進行user-space的context switch就完成切換</p>
+<h3 id="如何使用FTL"><a href="#如何使用FTL" class="headerlink" title="如何使用FTL"></a>如何使用FTL</h3><ul>
+<li>Caller<br>呼叫Job執行的部分，需要執行底下步驟</li>
+</ul>
+<ol>
+<li>初始化 job scheduler (in stack)</li>
+<li>創造task陣列 (也是stack)</li>
+<li>初始化job的參數</li>
+<li>將job kick到scheduler中</li>
+<li>等待atomic counter歸零 (job執行完成)</li>
+</ol>
+<p>程式碼如圖：<br><img data-src="/img/FiberJob/ftl_caller.png" alt=""></p>
+<ul>
+<li>Callee<br>作為Job的function必須符合底下格式：</li>
+</ul>
+<p><img data-src="/img/FiberJob/ftl_function.png" alt=""></p>
+<p>如圖所示，送入目標的task scehduler以及參數來執行job化的程式碼</p>
+<p>簡單的一個例子如下：</p>
+<p><img data-src="/img/FiberJob/ftl_callee.png" alt=""></p>
+<p>這是簡單對數字進行加法的程式，</p>
+<p>第一塊是主要邏輯進行的部分，也就是我們要平行化的部分</p>
+<p>第二塊是假如後面程式碼需要依賴其他task的結果，可以將目前context暫存，把執行資源yield給其他task執行，<br>等待依賴的task執行完畢</p>
+<p>第三塊則是可以從這個job中開始其他的job的執行。</p>
+<h2 id="實作"><a href="#實作" class="headerlink" title="實作"></a>實作</h2><p>我使用了FTL進行經典的flocking演算法boid的實作，<br>2000隻的鳥群，在單核心的執行如下：</p>
+<p><img data-src="/img/FiberJob/single_core_boid.png" alt=""></p>
+<p>使用job system優化後如下：</p>
+<p><img data-src="/img/FiberJob/jobify_boid.png" alt=""></p>
+<p>還有進行一些kick now, gather later，以及double buffering之類的技巧優化<br>以及將render thread和game logic thread拆開，因為不是這篇主題的重點，就不細講，<br>有興趣的可以參考實作的Repo：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/Harrison-Dev/Boid-Jobify">Harrison-Dev/Boid-Jobify</a></p>
+<p>別忘了幫我留下一顆星星！</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p><a target="_blank" rel="noopener" href="https://wickedengine.net/2018/11/24/simple-job-system-using-standard-c/">Job concept</a><br><a target="_blank" rel="noopener" href="https://graphitemaster.github.io/fibers/">Fiber Concept</a><br><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-tw/windows/win32/procthread/using-fibers">MS Fiber</a><br><a target="_blank" rel="noopener" href="https://ubm-twvideo01.s3.amazonaws.com/o1/vault/gdc2015/presentations/Gyrling_Christian_Parallelizing_The_Naughty.pdf">Naughty Dog’s Slide</a><br><a target="_blank" rel="noopener" href="https://github.com/RichieSams/FiberTaskingLib">Fiber Tasking lib</a><br><a target="_blank" rel="noopener" href="https://github.com/Tencent/flare/blob/master/flare/doc/fiber.md">Fiber vs Coroutine</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="followme">
+  <span>Welcome to my other publishing channels</span>
+
+  <div class="social-list">
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+      </div>
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Computer-Orgnization/" rel="tag"># Computer Orgnization</a>
+              <a href="/tags/Operating-System/" rel="tag"># Operating System</a>
+              <a href="/tags/C/" rel="tag"># C++</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/09/05/Unity/UniTask/" rel="prev" title="UniTask：利用async&#x2F;await優雅的撰寫callback">
+                  <i class="fa fa-angle-left"></i> UniTask：利用async/await優雅的撰寫callback
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/09/10/Travel/%E4%BA%AC%E9%83%BDBitSummit%E9%81%8A%E8%A8%98/" rel="next" title="京都BitSummit遊記">
+                  京都BitSummit遊記 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Harrison Chen</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"harrison0628","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js" defer></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

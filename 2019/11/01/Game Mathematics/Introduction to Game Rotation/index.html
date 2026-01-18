@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon.ico">
+  <link rel="mask-icon" href="/img/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.harrison-chen.dev","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":false,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":true}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="You can also see this article in my medium post.  我在接觸3D遊戲引擎時，一開始對旋轉這件事感到很困擾， 在Unity的編輯器中，旋轉的表現形式看起來像三個顏色的球狀旋轉。在Transform裡面又是有著3個數字的向量形式，到了程式碼裡面，又變成Quaternion這種資料形式，讓人一時之間很難搞懂。這篇文章會記錄一些我對於旋轉的表示方法、各種表示">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Introduction to Game Rotation">
+<meta property="og:url" content="https://blog.harrison-chen.dev/2019/11/01/Game%20Mathematics/Introduction%20to%20Game%20Rotation/index.html">
+<meta property="og:site_name" content="Haox Land">
+<meta property="og:description" content="You can also see this article in my medium post.  我在接觸3D遊戲引擎時，一開始對旋轉這件事感到很困擾， 在Unity的編輯器中，旋轉的表現形式看起來像三個顏色的球狀旋轉。在Transform裡面又是有著3個數字的向量形式，到了程式碼裡面，又變成Quaternion這種資料形式，讓人一時之間很難搞懂。這篇文章會記錄一些我對於旋轉的表示方法、各種表示">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://miro.medium.com/max/882/1*uLpwHWbnENJxOgrbTAbdAg.png">
+<meta property="og:image" content="https://miro.medium.com/max/341/1*yA-e4zQUaMjBoDiIPc4ggg.png">
+<meta property="og:image" content="https://miro.medium.com/max/1060/1*io6SlYVWUsRtcONiYWpwMA.png">
+<meta property="og:image" content="https://miro.medium.com/max/1256/1*IvRdP5jY-Elhi9SRkau_2Q.png">
+<meta property="og:image" content="https://miro.medium.com/max/1284/1*403W_CTHQcSLWwk_oI6EVg.png">
+<meta property="article:published_time" content="2019-11-01T04:00:00.000Z">
+<meta property="article:modified_time" content="2026-01-18T16:58:12.059Z">
+<meta property="article:author" content="Harrison Chen">
+<meta property="article:tag" content="Basic">
+<meta property="article:tag" content="Game Math">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://miro.medium.com/max/882/1*uLpwHWbnENJxOgrbTAbdAg.png">
+
+
+<link rel="canonical" href="https://blog.harrison-chen.dev/2019/11/01/Game%20Mathematics/Introduction%20to%20Game%20Rotation/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://blog.harrison-chen.dev/2019/11/01/Game%20Mathematics/Introduction%20to%20Game%20Rotation/","path":"2019/11/01/Game Mathematics/Introduction to Game Rotation/","title":"Introduction to Game Rotation"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Introduction to Game Rotation | Haox Land</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-K056ZHDF24"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"G-K056ZHDF24","only_pageview":false,"measure_protocol_api_secret":null}</script>
+  <script src="/js/third-party/analytics/google-analytics.js" defer></script>
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/pjax.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Haox Land" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Haox Land</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/About/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-rss"><a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="Searching..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E7%B6%AD%E7%A9%BA%E9%96%93%E4%B8%AD%E7%9A%84%E6%97%8B%E8%BD%89%E8%A1%A8%E7%A4%BA"><span class="nav-number">1.</span> <span class="nav-text">三維空間中的旋轉表示</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9F%A9%E9%99%A3-Rotation-Matrix"><span class="nav-number">1.1.</span> <span class="nav-text">矩陣(Rotation Matrix)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%90%E6%8B%89%E8%A7%92-Euler-Angle"><span class="nav-number">1.2.</span> <span class="nav-text">歐拉角(Euler Angle)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E8%A1%A8%E7%A4%BA%E5%90%8C%E6%A8%A3%E6%97%8B%E8%BD%89%E7%9A%84%E6%AD%90%E6%8B%89%E8%A7%92%E4%B8%A6%E4%B8%8D%E5%94%AF%E4%B8%80"><span class="nav-number">1.3.</span> <span class="nav-text">1. 表示同樣旋轉的歐拉角並不唯一</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%B0%8D%E6%96%BC%E5%85%A9%E5%80%8B%E6%97%8B%E8%BD%89%E8%A1%A8%E7%A4%BA%E7%9A%84%E5%85%A7%E6%8F%92-Lerp-%E7%9A%84%E5%95%8F%E9%A1%8C"><span class="nav-number">1.4.</span> <span class="nav-text">2. 對於兩個旋轉表示的內插(Lerp)的問題</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E5%85%83%E6%95%B8-Quaternion"><span class="nav-number">2.</span> <span class="nav-text">四元數(Quaternion)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E5%85%83%E6%95%B8%E7%9A%84%E5%AE%9A%E7%BE%A9"><span class="nav-number">2.1.</span> <span class="nav-text">四元數的定義</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E5%85%83%E6%95%B8%E7%9A%84%E6%80%A7%E8%B3%AA%E5%80%91"><span class="nav-number">2.2.</span> <span class="nav-text">四元數的性質們</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%89%E6%8F%9B%E6%88%90%E5%9B%9B%E5%85%83%E6%95%B8"><span class="nav-number">3.</span> <span class="nav-text">轉換成四元數</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%87%E6%AD%90%E6%8B%89%E8%A7%92%E8%BD%89%E6%8F%9B%E6%88%90%E5%9B%9B%E5%85%83%E6%95%B8"><span class="nav-number">3.1.</span> <span class="nav-text">將歐拉角轉換成四元數</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Harrison Chen"
+      src="/img/avatar.png">
+  <p class="site-author-name" itemprop="name">Harrison Chen</p>
+  <div class="site-description" itemprop="description">A tiny game developer, most time as game programmer.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Harrison-Dev" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Harrison-Dev" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/HaoCooLLL" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;HaoCooLLL" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.linkedin.com/in/harrison-chen-tw" title="LinkedIn → https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;harrison-chen-tw" rel="noopener me" target="_blank"><i class="fab fa-linkedin fa-fw"></i>LinkedIn</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://blog.harrison-chen.dev/2019/11/01/Game%20Mathematics/Introduction%20to%20Game%20Rotation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/avatar.png">
+      <meta itemprop="name" content="Harrison Chen">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Haox Land">
+      <meta itemprop="description" content="A tiny game developer, most time as game programmer.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Introduction to Game Rotation | Haox Land">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Introduction to Game Rotation
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2019-11-01 12:00:00" itemprop="dateCreated datePublished" datetime="2019-11-01T12:00:00+08:00">2019-11-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2026-01-19 00:58:12" itemprop="dateModified" datetime="2026-01-19T00:58:12+08:00">2026-01-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Game-Mathematics/" itemprop="url" rel="index"><span itemprop="name">Game Mathematics</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus: </span>
+    
+    <a title="disqus" href="/2019/11/01/Game%20Mathematics/Introduction%20to%20Game%20Rotation/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/11/01/Game Mathematics/Introduction to Game Rotation/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>You can also see this article in <a target="_blank" rel="noopener" href="https://medium.com/akatsuki-taiwan-technology/introduction-to-game-rotation-2d1b671216c0">my medium post</a>.</p>
+<p><img data-src="https://miro.medium.com/max/882/1*uLpwHWbnENJxOgrbTAbdAg.png" alt="Title"></p>
+<p>我在接觸3D遊戲引擎時，一開始對旋轉這件事感到很困擾，</p>
+<p>在Unity的編輯器中，旋轉的表現形式看起來像三個顏色的球狀旋轉。在Transform裡面又是有著3個數字的向量形式，到了程式碼裡面，又變成Quaternion這種資料形式，讓人一時之間很難搞懂。<br>這篇文章會記錄一些我對於旋轉的表示方法、各種表示方法的優缺點的理解，以及使用上的一些轉換方式。最後再用一個範例，在Unity中藉由滑鼠拖拉旋轉攝影機來表示如何用程式簡單控制旋轉。</p>
+<span id="more"></span>
+<h2 id="三維空間中的旋轉表示"><a href="#三維空間中的旋轉表示" class="headerlink" title="三維空間中的旋轉表示"></a>三維空間中的旋轉表示</h2><p>最為常見的用法有三種：矩陣、歐拉角以及四元數</p>
+<h3 id="矩陣-Rotation-Matrix"><a href="#矩陣-Rotation-Matrix" class="headerlink" title="矩陣(Rotation Matrix)"></a>矩陣(Rotation Matrix)</h3><p>矩陣方式就是我們所熟知的旋轉矩陣，利用一個3×3矩陣，表示從一個基準的座標，旋轉到目標的座標所使用的旋轉矩陣，換言之，矩陣形式就是將旋轉表示(orientation)轉換成旋轉表示的數學形式。</p>
+<p><img data-src="https://miro.medium.com/max/341/1*yA-e4zQUaMjBoDiIPc4ggg.png" alt="RotationMatrix"></p>
+<p>利用矩陣形式的最大優點，就是對於三維空間座標的向量旋轉是可以立刻使用的，並且可以簡單取得相對的角位移(angular displacement)。<br>而缺點部分就是相對於其他旋轉的表示方法，需要花到9個數字的儲存空間，並且經常會造成浪費，因為時常我們可能只需要相對某個轉軸的旋轉。</p>
+<h3 id="歐拉角-Euler-Angle"><a href="#歐拉角-Euler-Angle" class="headerlink" title="歐拉角(Euler Angle)"></a>歐拉角(Euler Angle)</h3><p>歐拉角是將旋轉的定義，從用數字一次定義出來，改變為依照順序對不同軸向進行旋轉，依照heading-pitch-bank定義三個旋轉為heading angle, pitch angle以及bank angle。Heading rotation是沿著y軸進行旋轉，Pitch rotation沿著x軸進行旋轉，Bank rotation則是沿著z軸進行旋轉，字面上定義依照這個順序進行歐拉角的旋轉。<br>值得注意的是，歐拉角的旋轉不只有heading-pitch-bank方式，還有roll-pitch-yaw等不同的旋轉方式以及順序，像在Unity中，就是以這種方式旋轉，Unity的歐拉角的旋轉順序是沿著Z軸旋轉(roll)，再來沿著X軸旋轉(pitch)，最後沿著Y軸旋轉(yaw)。</p>
+<p><img data-src="https://miro.medium.com/max/1060/1*io6SlYVWUsRtcONiYWpwMA.png" alt="Euler Angle"></p>
+<p>歐拉角的最大的優點，就是歐拉角對於閱讀起來十分直觀，是人類可以直接判別的旋轉方法。此外，歐拉角也是對於旋轉最為簡潔的表達方法，只需要3個數字就可以表達出一個旋轉，是最為節省記憶體的方法。<br>但是，看似如此方便的歐拉角，卻存在著兩個非常嚴重的缺點：</p>
+<h3 id="1-表示同樣旋轉的歐拉角並不唯一"><a href="#1-表示同樣旋轉的歐拉角並不唯一" class="headerlink" title="1. 表示同樣旋轉的歐拉角並不唯一"></a>1. 表示同樣旋轉的歐拉角並不唯一</h3><p>也被稱作別名(aliasing)問題，例如在角度上加上360度，就是一種最單純的別名問題，因為對角度加上360度並不會改變他的角度。但是這類別名問題只要限制角度範圍就可以解決，並不會造成太大的困擾。<br>真正麻煩的是第二種，因為三個角度並不互相獨立的造成的問題，例如pitch 135度與 heading 180度加上pitch 45度(向下旋轉)是等價的旋轉表示。對於這種別名問題，常見的做法是限制他的旋轉角度，例如限制heading/bank在 －180 ~ +180之間，將pitch限制在－90 ~ +90之間。<br>然而，就算限制了上面所說的角度之後，仍然會存在一個問題，被稱為萬向鎖(Gimbal Lock)，最為著名的舉例就是先head 45度再pitch 90度，與先pitch 90度再banking 45度是相同的，其最根本的原因就是pitch ±90度之後，使得另外兩個轉軸重疊，此時兩個轉軸旋轉任意角度都會造成別名問題。</p>
+<p><img data-src="https://miro.medium.com/max/1256/1*IvRdP5jY-Elhi9SRkau_2Q.png" alt="Gimbal Lock" title="from Wikipedia"></p>
+<p>為了消除萬向鎖造成的別名問題，可以規定萬向鎖發生時，只交由某一個軸去完成旋轉，假如約定以heading完成全部旋轉，bank在萬向鎖發生時就會永遠為0。</p>
+<h3 id="2-對於兩個旋轉表示的內插-Lerp-的問題"><a href="#2-對於兩個旋轉表示的內插-Lerp-的問題" class="headerlink" title="2. 對於兩個旋轉表示的內插(Lerp)的問題"></a>2. 對於兩個旋轉表示的內插(Lerp)的問題</h3><p>角度的內差第一個會面對的問題，是歐拉角旋轉的週期性所產生的，例如要從heading -150旋轉到heading 150，就存在著60度的短弧與300度的長弧之分，解決這類問題就是將插值的差角限制到正負180度內，確保旋轉在最短弧上。<br>而在旋轉角度內插上，歐拉角會遇到最大的問題，還是前面提的萬向鎖問題。在單純地將歐拉角進行差值運算時，如果遇到萬向鎖問題，大多情況會導致錯誤的路徑，抖動等等問題，在萬向鎖情況旋轉歐拉角，需要將兩個角度分開旋轉，但是以攝影機的轉向操作為例，在球面上光滑旋轉才是最舒適的表現方式。而歐拉角在旋轉上所遇到的萬向鎖問題，很不幸的目前並沒有任何好的數學解法，這也是歐拉角沒辦法作為最主要旋轉表示的主要原因。</p>
+<p>More information : <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=zc8b2Jo7mno">https://www.youtube.com/watch?v=zc8b2Jo7mno</a></p>
+<h2 id="四元數-Quaternion"><a href="#四元數-Quaternion" class="headerlink" title="四元數(Quaternion)"></a>四元數(Quaternion)</h2><h3 id="四元數的定義"><a href="#四元數的定義" class="headerlink" title="四元數的定義"></a>四元數的定義</h3><p>四元數原先是一個四維的複數空間的表示方法，在幾何上的應用，可以作為一種旋轉的表示方式。數值上，存在一個定標器(scaler)w以及一組三維向量v或是直接拆分成x,y,z(Unity中，可以直接取得w,x,y,z四個數值)。<br>四元數可以代表一個複數空間中的座標，其中[w, (x, y ,z)]被定義成w+xi+yj+zk。其中的i,j,k有如同二維複數空間的性質：</p>
+<script type="math/tex; mode=display">
+    i^2 = j^2 = k^2 = -1</script><script type="math/tex; mode=display">
+    ij = k, ji = -k, jk = i, kj = -i, ki = j, ik = -j</script><p>如同二維空間的複數座標可以旋轉二維向量，四元數也可以拿來旋轉三維向量。<br>而四元數中的四個數字究竟是什麼意思呢？從歐拉角我們可以得知，一個三維的旋轉表示可以被表述成一個旋轉軸加上一個旋轉角度，四元數也是用這個概念表示的，假設有一個旋轉軸n加上旋轉角度θ，整個四元數可以被表示成：</p>
+<script type="math/tex; mode=display">
+    [w,v] = [cos(θ/2), sin(θ/2)\hat{n}]</script><script type="math/tex; mode=display">
+    [w,x,y,z]  =  [ cos(θ/2), sin(θ/2) n_x,  sin(θ/2) n_y , sin(θ/2) n_z]</script><h3 id="四元數的性質們"><a href="#四元數的性質們" class="headerlink" title="四元數的性質們"></a>四元數的性質們</h3><ul>
+<li><p>完全沒有旋轉的四元數被稱為identity，數值為[1,0]和[-1,0]，其中的0表示零向量。</p>
+</li>
+<li><p>在旋轉表示的用途中，我們只使用單位四元數(Unit Quaternion)，即模數為1的四元數。</p>
+</li>
+</ul>
+<script type="math/tex; mode=display">
+    ||q || = [w,v] = \sqrt{w^2 + ||v||^2} = 1</script><ul>
+<li>四元數的運算<ul>
+<li>四元數的乘法沒有交換律，q1q2 ≠ q2q1。</li>
+<li>四元數的乘法存在結合律， (q1q2)q3 = q1(q2q3)</li>
+<li>四元數的乘積的模數等於模數的乘積(||q1|| <em>||q2|| = ||q1</em>q2||)</li>
+<li>四元數的乘法可以表示兩個旋轉的結合，進行q1再進行q2，可以合併成q3 = q2q1(旋轉順序由右向左)</li>
+<li>四元數的旋轉差為反四元數，q1到q2的旋轉量為：d = (q1^-1) q2</li>
+</ul>
+</li>
+</ul>
+<p>還有許多未提到的四元數運算如點積、Quaternion Interpolation(Slerp)等，在基礎篇裡面就先省略，如果有下一篇再補上相關資訊&lt;(<em> </em>)&gt;。<br>四元數的優點是可以平滑插值計算，並且可以快速計算角位移以及轉換成旋轉矩陣，而且只用到四個數字進行存取，記憶體消耗較低。<br>四元數的缺點則是跟矩陣類似，相較歐拉角更大的記憶體用量，並且比旋轉矩陣更難直接讓人類判讀。</p>
+<h2 id="轉換成四元數"><a href="#轉換成四元數" class="headerlink" title="轉換成四元數"></a>轉換成四元數</h2><p>在Unity引擎裡面，Transform所顯示的旋轉角度是歐拉角，腳本上取得的Rotation則是四元數，理解兩者之間的轉換方式可以讓使用上更為方便。<br>為了更符合Unity內的使用，在這個段落中，歐拉角的表示方式將使用roll-pitch-yaw來表示。</p>
+<h3 id="將歐拉角轉換成四元數"><a href="#將歐拉角轉換成四元數" class="headerlink" title="將歐拉角轉換成四元數"></a>將歐拉角轉換成四元數</h3><p>在前面我們了解到，四元數可以藉由相乘來完成連續旋轉，所以我們將把rolling, pitching, yawing分為三個四元數進行旋轉，最後再將它們串成同一個四元數。<br>根據四元數的定義，可以轉換如下：</p>
+<p><img data-src="https://miro.medium.com/max/1284/1*403W_CTHQcSLWwk_oI6EVg.png" alt="eulerToQ" title="Image from wikipedia"></p>
+<p>Reference<br>Wikipedia:<br><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles">https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles</a><br><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Quaternion">https://en.wikipedia.org/wiki/Quaternion</a></p>
+<p>3D Math Primer For Graphics and Game Development:<br>Amazon : <a target="_blank" rel="noopener" href="https://www.amazon.com/Math-Primer-Graphics-Game-Development-ebook/dp/B008KZU548">https://www.amazon.com/Math-Primer-Graphics-Game-Development-ebook/dp/B008KZU548</a></p>
+<p>Unity Rotation Guide:<br><a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/QuaternionAndEulerRotationsInUnity.html">https://docs.unity3d.com/Manual/QuaternionAndEulerRotationsInUnity.html</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="followme">
+  <span>Welcome to my other publishing channels</span>
+
+  <div class="social-list">
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+      </div>
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Basic/" rel="tag"># Basic</a>
+              <a href="/tags/Game-Math/" rel="tag"># Game Math</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/07/27/Game%20Programming/Memory%20Management%20in%20Game/" rel="prev" title="關於C#記憶體管理那些事。">
+                  <i class="fa fa-angle-left"></i> 關於C#記憶體管理那些事。
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/02/25/Game%20Physics/2D%20Collision%20Detection/" rel="next" title="2D Collision Study">
+                  2D Collision Study <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Harrison Chen</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"harrison0628","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js" defer></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

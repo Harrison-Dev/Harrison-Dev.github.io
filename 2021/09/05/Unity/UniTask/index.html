@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon.ico">
+  <link rel="mask-icon" href="/img/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.harrison-chen.dev","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":false,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":true}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Preface前些日子因為一點小意外，需要在一兩天時間從零開始弄一個web service上雲，因為部分邏輯已經先用C#寫好了，平常也天天在用C#，沒想太多就用上了 ASP.NET core，沒想到意外的很香。 除了.NET Core很香之外，這兩天的時間寫了寫MVC的Web service，意外地發現和寫遊戲前端截然不同的寫法，在寫web service的時候，C#的async功能可以說是用個">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UniTask：利用async&#x2F;await優雅的撰寫callback">
+<meta property="og:url" content="https://blog.harrison-chen.dev/2021/09/05/Unity/UniTask/index.html">
+<meta property="og:site_name" content="Haox Land">
+<meta property="og:description" content="Preface前些日子因為一點小意外，需要在一兩天時間從零開始弄一個web service上雲，因為部分邏輯已經先用C#寫好了，平常也天天在用C#，沒想太多就用上了 ASP.NET core，沒想到意外的很香。 除了.NET Core很香之外，這兩天的時間寫了寫MVC的Web service，意外地發現和寫遊戲前端截然不同的寫法，在寫web service的時候，C#的async功能可以說是用個">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://blog.harrison-chen.dev/img/UniTask/juicy.gif">
+<meta property="og:image" content="https://blog.harrison-chen.dev/img/UniTask/no_juicy.gif">
+<meta property="article:published_time" content="2021-09-05T18:30:45.000Z">
+<meta property="article:modified_time" content="2026-01-18T16:58:12.060Z">
+<meta property="article:author" content="Harrison Chen">
+<meta property="article:tag" content="Basic">
+<meta property="article:tag" content="Unity">
+<meta property="article:tag" content="Programming Tips">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.harrison-chen.dev/img/UniTask/juicy.gif">
+
+
+<link rel="canonical" href="https://blog.harrison-chen.dev/2021/09/05/Unity/UniTask/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://blog.harrison-chen.dev/2021/09/05/Unity/UniTask/","path":"2021/09/05/Unity/UniTask/","title":"UniTask：利用async/await優雅的撰寫callback"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>UniTask：利用async/await優雅的撰寫callback | Haox Land</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-K056ZHDF24"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"G-K056ZHDF24","only_pageview":false,"measure_protocol_api_secret":null}</script>
+  <script src="/js/third-party/analytics/google-analytics.js" defer></script>
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/pjax.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Haox Land" type="application/atom+xml"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Haox Land</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/About/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-rss"><a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>RSS</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="Searching..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Preface"><span class="nav-number">1.</span> <span class="nav-text">Preface</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sync-vs-Async"><span class="nav-number">2.</span> <span class="nav-text">Sync vs Async</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Callback"><span class="nav-number">3.</span> <span class="nav-text">Callback</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Coroutine"><span class="nav-number">4.</span> <span class="nav-text">Coroutine</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UniTask"><span class="nav-number">5.</span> <span class="nav-text">UniTask</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">6.</span> <span class="nav-text">Conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%B6%E4%BC%B8%E9%96%B1%E8%AE%80"><span class="nav-number">7.</span> <span class="nav-text">延伸閱讀</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Harrison Chen"
+      src="/img/avatar.png">
+  <p class="site-author-name" itemprop="name">Harrison Chen</p>
+  <div class="site-description" itemprop="description">A tiny game developer, most time as game programmer.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Harrison-Dev" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Harrison-Dev" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/HaoCooLLL" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;HaoCooLLL" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.linkedin.com/in/harrison-chen-tw" title="LinkedIn → https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;harrison-chen-tw" rel="noopener me" target="_blank"><i class="fab fa-linkedin fa-fw"></i>LinkedIn</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://blog.harrison-chen.dev/2021/09/05/Unity/UniTask/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/img/avatar.png">
+      <meta itemprop="name" content="Harrison Chen">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Haox Land">
+      <meta itemprop="description" content="A tiny game developer, most time as game programmer.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="UniTask：利用async&#x2F;await優雅的撰寫callback | Haox Land">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          UniTask：利用async/await優雅的撰寫callback
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-09-06 02:30:45" itemprop="dateCreated datePublished" datetime="2021-09-06T02:30:45+08:00">2021-09-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2026-01-19 00:58:12" itemprop="dateModified" datetime="2026-01-19T00:58:12+08:00">2026-01-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus: </span>
+    
+    <a title="disqus" href="/2021/09/05/Unity/UniTask/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/09/05/Unity/UniTask/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><!-- Ref : https://neuecc.medium.com/unitask-v2-zero-allocation-async-await-for-unity-with-asynchronous-linq-1aa9c96aa7dd -->
+<h2 id="Preface"><a href="#Preface" class="headerlink" title="Preface"></a>Preface</h2><p>前些日子因為一點小意外，需要在一兩天時間從零開始弄一個web service上雲，因為部分邏輯已經先用C#寫好了，平常也天天在用C#，沒想太多就用上了 ASP.NET core，沒想到意外的很香。</p>
+<p>除了.NET Core很香之外，這兩天的時間寫了寫MVC的Web service，意外地發現和寫遊戲前端截然不同的寫法，在寫web service的時候，C#的async功能可以說是用個不停。</p>
+<p>從以前就久聞UniRx差分出來的UniTask的大名，卻遲遲沒有機會與他相見，想說趁這個機會來碰一碰吧，碰巧，最近下班玩的一個插件，剛好使用Coroutine作為接口，趁這個機會，來試試UniTask可以怎麼讓程式撰寫變得有所不同。</p>
+<span id="more"></span>
+<h2 id="Sync-vs-Async"><a href="#Sync-vs-Async" class="headerlink" title="Sync vs Async"></a>Sync vs Async</h2><p>印象好像從大一的計概？還是後來的組合語言或計組之類的課程，都常常提到同步和非同步的差別。<br>不太確定課本精準的定義，不過<strong>Synchronize(sync, 同步)</strong>大致上是指在程式執行過程中，<strong>必須等前一個訊號執行完成，才繼續進行下一個指令</strong>，而<strong>Asynchronize(async, 非同步)</strong>則是反過來，這個訊號並<strong>不一定要等到執行到了盡頭，才開始下一個指令的運行</strong>。</p>
+<p>在一般寫程式的時候，大部分的程式碼都是逐行、同步進行的(雖然流水線、指令級同步等東西存在，但邏輯上還是逐行在跑)，然而，可想而知，有許多的指令會造成執行上的瓶頸，例如：IO, 網路相關的動作，相對於程式碼都是緩慢的，以同步方式執行，就必須要在這裡等到天荒地老，CPU直接等到睡著，可想而知這不是個好點子。</p>
+<h2 id="Callback"><a href="#Callback" class="headerlink" title="Callback"></a>Callback</h2><p>此時，就需要用到callback function這種做法。<br>傳進一個delegate (或是function pointer，如果你熱愛C語言的話)，等到事件結束後，再繼續執行這個完成後的function，當然可以將IO得到的資訊作為參數之類的。</p>
+<p>許多library都是類似底下這種形式呼叫：</p>
+<pre><code class="lang-csharp">void DoSomethingCool()
+&#123;
+    DoSomethingNeedToWait(ioStuff =&gt; 
+    &#123;
+        DoSomethingAfterHugeIO(ioStuff);
+    &#125;);
+&#125;
+
+void DoSomethingNeedToWait(System.Action&lt;IOStuff&gt; callback)
+&#123;
+    var IOStuff = SomethingHugeIO();
+    callback(IOStuff);
+&#125;
+
+void DoSomethingNeedToWait(System.Action callback)
+&#123;
+    SomethingHugeIO();
+    callback();
+&#125;
+</code></pre>
+<p>扣掉這樣IO其實還是同步的吐槽，這樣的作法已經非常酷，但想像到底下的狀況<br>當IO結束之後，必須送到某個伺服器等待回應，程式碼就會開始出現怪味：</p>
+<pre><code class="lang-csharp">void DoSomethingCool()
+&#123;
+    DoSomethingNeedToWait(ioStuff =&gt; 
+    &#123;
+        DoSomethingNeedACoolServer(ioStuff, res =&gt;
+        &#123;
+            DoTheRealCoolThings(res);
+        &#125;);
+    &#125;);
+&#125;
+
+void DoSomethingNeedToWait(System.Action&lt;IOStuff&gt; callback)
+&#123;
+    var IOStuff = SomethingHugeIO();
+    callback(IOStuff);
+&#125;
+
+void DoSomethingNeedACoolServer(IOStuff coolData, System.Action&lt;Response&gt; onResponsed)
+&#123;
+    var response = SomethingWaitServer();
+    onResponsed(response);
+&#125;
+</code></pre>
+<p>當然，扣掉request好像完全不需要handle error的吐槽，我們可以看到DoSomethingCool的主函式，已經開始出現波動拳的力量。</p>
+<p>這對於一個加班N小時候看到這段程式碼的工程師來說，很有可能就是壓垮他的最後一片稻草了。</p>
+<p>想想一般的工程師，回到家之後沒有女僕龍可以陪伴，我們真的不需要互相傷害，製造出這種callback hell，幸好，Unity裡面早有一個常見方式可以克服這件事，那就是Coroutine。</p>
+<h2 id="Coroutine"><a href="#Coroutine" class="headerlink" title="Coroutine"></a>Coroutine</h2><p>Coroutine使用C#的迭代器模式，利用一個返回迭代器的Function來進行序列執行，並且在每一次Update後，做一次tick觸發。</p>
+<p>原本的程式碼，可以改寫成這種形式：</p>
+<pre><code class="lang-csharp">IOStuff _ioStuff;
+Response _response;
+
+void Start()
+&#123;
+    StartCoroutine(DoSomethingCool());
+&#125;
+
+IEnumerator DoSomethingCool()
+&#123;
+    yield return DoSomethingNeedToWait();
+    yield return DoSomethingNeedACoolServer(_ioStuff);
+    DoTheRealCoolThings(_response);
+&#125;
+
+IEnumerator DoSomethingNeedToWait()
+&#123;
+    yield return SomethingHugeIO(out _ioStuff);
+&#125;
+
+IEnumerator DoSomethingNeedACoolServer(IOStuff coolData)
+&#123;
+    yield return SomethingWaitServer(out _response);
+&#125;
+</code></pre>
+<p>顯然可以感覺到，比波動拳安全許多，yield return後的事情，只會在一個frame進行一次，<br>如果還沒完成，會等到下一次tick時再次檢查，這樣可以迴避掉波動拳，並且讓半夜看到這段程式碼的工程師感到舒暢許多，明顯可以一眼看出在等什麼以及資料流的走向。</p>
+<p>然而，Coroutine必須綁定monobehaviour進行，以及每一次Update時unity都需要費心來關切他，而且try-catch區段在yield語法下不可用，或許我們不需要那麼多心思在製作這樣的串列上，而是有其他替代方法。</p>
+<h2 id="UniTask"><a href="#UniTask" class="headerlink" title="UniTask"></a>UniTask</h2><p>UniTask是利用C#的async/await語言機制整合進unity元件的一個解決方法，<br>可以用雷同C# Task的方式來進行unity元件的操作，獲得一個更優雅的call chain，並且不需要擔心allocation問題(至少readme上是寫no allocation)。<br>(async在語言層面上應該是類似C++的std::this_thread::yield，將這個thread的優先權交出，但C#的async會不會真的交出優先權我不曉得)</p>
+<p>我想這邊開始就不用上面提到的那些假舉例，而是用我最近實際遇到的使用情境來說明。</p>
+<p>前些日子在特價的時候，我買了MoreMountain的<a target="_blank" rel="noopener" href="https://assetstore.unity.com/packages/tools/particles-effects/feel-183370">Feel</a>這個插件，他可以使用預先做好的元件，做出許多很酷的效果，包含Cinemachine的一些元件互動，或是Post Effect的動態等。</p>
+<p>可以做出像這樣的打擊效果：<br><img data-src="/img/UniTask/juicy.gif" alt="Juicy"></p>
+<p>順帶一提，再加入效果前的樣子是這樣的：</p>
+<p><img data-src="/img/UniTask/no_juicy.gif" alt="NoJuicy"></p>
+<p>可以說是相當方便的插件，端詳他的程式碼後，發現他實作一連串演出的呼叫<strong>MMFeedbacks</strong>是使用coroutine呼叫的，倘若我們想要在這一連串演出結束過後，再銜接什麼演出，就必須遇到前面提到的Coroutine問題。</p>
+<p>MMFeedback的呼叫介面如下：</p>
+<pre><code class="lang-csharp">public virtual void PlayFeedbacks()
+&#123;
+    StartCoroutine(PlayFeedbacksInternal(this.transform.position, FeedbacksIntensity));
+&#125;
+</code></pre>
+<p>其實他有提供幾個Event可以直接對接，但如果我們想和其他coroutine，或是tweening演出一起寫成一個function，使用event的撰寫就會變得冗長且難以維護。</p>
+<p>用Event的方式來註冊的話，可以寫成如下：</p>
+<pre><code class="lang-csharp">private void HitSomething(Collider[] hits)
+&#123;
+    m_HitPos = GetRecent(3);
+    OnHit?.Invoke();
+    FeedbackHandler.Events.OnComplete.AddListener(() =&gt;
+    &#123;
+        TriggerAfterFeedback(hits);
+    &#125;);
+    FeedbackHandler.PlayFeedbacks();
+&#125;
+</code></pre>
+<p>這段程式碼有幾個問題，第一個是Event裡面的匿名function，執行時間其實在PlayFeedbacks底下，這導致了程式碼的順序與執行順序的不同，降低了一部分的可讀性。</p>
+<p>再者，這段程式碼其實沒有寫到RemoveListener的部分，如果每次呼叫都AddListener一次，會造成顯著的memory leak，當然我們也可以將event的註冊拉到物件初始化的時候，但這樣會將邏輯更進一步的分離，可讀性再次下降。</p>
+<p>最後，就是許多演出的串列如果在同一個function實作，最終會變成上面所說的波動拳問題，要將這個做法寫得漂亮，需要耗費許多苦心。</p>
+<p>還好，這個插件還提供第二個方案，也就是前面提到Unity對於callback hell的一個解法，也就是Coroutine。</p>
+<p>MMFeedback對於Coroutine的接口如下：</p>
+<pre><code class="lang-csharp">public virtual IEnumerator PlayFeedbacksCoroutine(Vector3 position3,...)
+&#123;
+    return PlayFeedbacksInternal(position, feedbacksIntensity, forceRevert);
+&#125;
+</code></pre>
+<p>可以看到，這個接口直接回傳了一個迭代器，我們可以簡單的利用這個IEnumrator改寫成如下：</p>
+<pre><code class="lang-csharp">private void HitSomething(Collider[] hits)
+&#123;
+    StartCoroutine(DoHitSomething(hits));
+&#125;
+
+private IEnumerator DoHitSomething(Collider[] hits)
+&#123;
+    m_HitPos = GetRecent(3);
+    OnHit?.Invoke();
+    yield return FeedbackHandler.PlayFeedbacksCoroutine(this.transform.position);
+    TriggerAfterFeedback(hits);
+&#125;
+</code></pre>
+<p>這樣就可以用Coroutine的方式，解決掉event可能產生的一些問題，但這樣就會產生一些coroutine的對應消耗，以及handle coroutine結束與否的問題，而前面提到的UniTask，可以用更優雅的方式做到。</p>
+<p>我們可以先為MMFeedbacks添加一個接口function如下：</p>
+<pre><code class="lang-csharp">public virtual async UniTask PlayFeedbacksAsync()
+&#123;
+    await PlayFeedbacksInternal(this.transform.position, FeedbacksIntensity);
+&#125;
+</code></pre>
+<p>UniTask會時做一個awaiter，將coroutine的執行完成與否這件事封裝到UniTask自己的internal enumerator之中，這樣我們呼叫時，就可以簡單地寫成這樣：</p>
+<pre><code class="lang-csharp">private async UniTask OnHitSomething(Collider[] hits)
+&#123;
+    m_HitPos = GetRecent(3);
+    OnHit?.Invoke();
+    await FeedbackHandler.PlayFeedbacksAsync();
+    TriggerAfterFeedback(hits);
+&#125;
+</code></pre>
+<p>這樣整個演出就可以簡單的寫成一個async function，其中的calling chain也會變得優雅許多，甚至如果有多個演出同時進行的時候，可以寫成下面的形式：</p>
+<pre><code class="lang-csharp">private async void DoTonsOfScreenPlay()
+&#123;
+    List&lt;UniTask&gt; screenPlays = new List&lt;UniTask&gt;();
+    screenPlays.Add(OnHitSomething()); 
+    screenPlays.Add(OnHitSomethingCool()); 
+    screenPlays.Add(OnHitSomethingCute()); 
+    screenPlays.Add(OnHitSomethingAhoy());
+    screenPlays.Add(LoadNextPartyAddressables());
+    await UniTask.WhenAll(screenPlays);
+
+    // After all screenplay end
+    await SceneManager.LoadSceneAsync(&quot;Next Party&quot;);
+&#125;
+</code></pre>
+<p>這樣我們可以在播出許多演出的同時，偷偷地在背後讀取Assets，直到一切都準備就緒了，馬上開始進行下一個場景的切換，達成一些無縫切換的效果。<br>順帶一提，轉場的概念可以去看我最敬愛的blog writer，羽毛的熱門文章：<a target="_blank" rel="noopener" href="https://featherchung.wordpress.com/2017/07/10/unity%E5%9F%BA%E6%9C%AC%E5%8A%9F8-%E9%87%8D%E6%96%B0%E8%BC%89%E5%85%A5%E5%A0%B4%E6%99%AF%E8%BD%89%E6%8F%9B/">重新載入&amp;場景轉換</a>，肯定會獲益良多。</p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>UniTask是個非常酷的插件，可以將許多演出與callback的可怕義大利麵程式碼，轉換成一眼就能看出結果的程式碼，同個作者的UniRx也是非常酷的插件，有興趣的可以去看看這個作者的repo們。</p>
+<h2 id="延伸閱讀"><a href="#延伸閱讀" class="headerlink" title="延伸閱讀"></a>延伸閱讀</h2><p><a target="_blank" rel="noopener" href="https://github.com/Cysharp/UniTask">UniTask Repo</a></p>
+<p><a target="_blank" rel="noopener" href="https://neuecc.medium.com/unitask-v2-zero-allocation-async-await-for-unity-with-asynchronous-linq-1aa9c96aa7dd">UniTask v2 — Zero Allocation async/await for Unity, with Asynchronous LINQ</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=Lvbs22iZFPk">【Unite 2017 Tokyo】「黒騎士と白の魔王」にみるC#で統一したサーバー/クライアント開発と現実的なUniRx使いこなし術</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/neuecc/UniRx">UniRx Repo</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/Cysharp/UniTask#external-assets">UniRx DoTween Integration</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="followme">
+  <span>Welcome to my other publishing channels</span>
+
+  <div class="social-list">
+
+      <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+      </div>
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Basic/" rel="tag"># Basic</a>
+              <a href="/tags/Unity/" rel="tag"># Unity</a>
+              <a href="/tags/Programming-Tips/" rel="tag"># Programming Tips</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/04/25/Game%20Physics/Physics%20Constraint/" rel="prev" title="Game Physics - Constraint">
+                  <i class="fa fa-angle-left"></i> Game Physics - Constraint
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/07/27/Game%20Programming/Fiber%20Job%20System/" rel="next" title="Fiber based job system">
+                  Fiber based job system <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Harrison Chen</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"harrison0628","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js" defer></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>
