@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Haox Land - Notes</title>
+  <link href="https://blog.harrison-chen.dev/notes/atom.xml" rel="self"/>
+  <link href="https://blog.harrison-chen.dev/notes/"/>
+  <id>https://blog.harrison-chen.dev/notes/</id>
+  <updated>2026-06-14T00:00:00.000Z</updated>
+  <subtitle>Curated notes from haox-knowledge.</subtitle>
+<entry>
+  <title>好學生的行動指南：別讓完美計畫成為你合法的拖延理由</title>
+  <link href="https://blog.harrison-chen.dev/notes/good-student-action-guide-vincent-yu/"/>
+  <id>https://blog.harrison-chen.dev/notes/good-student-action-guide-vincent-yu/</id>
+  <published>2026-06-14T00:00:00.000Z</published>
+  <updated>2026-06-14T00:00:00.000Z</updated>
+  <summary>拖延多半不是懶惰，而是錯誤的風險管理與自尊保護：用「準備、規劃、蒐集資料」來逃避被現實打分數。 以「正向不對稱」角度看行動：下檔可控、上檔無上限；把任務切成最小可行單位，縮短反饋延遲。 心態從「扣分制」轉為「積分制」；多數決策是可逆的雙向門，速度比完美更重要。…</summary>
+  
+</entry>
+<entry>
+  <title>2026-04-14_Game_Funding_Lessons_from_Outersloth_GDC2026</title>
+  <link href="https://blog.harrison-chen.dev/notes/game-funding-lessons-from-outersloth-gdc2026/"/>
+  <id>https://blog.harrison-chen.dev/notes/game-funding-lessons-from-outersloth-gdc2026/</id>
+  <published>2026-06-14T00:00:00.000Z</published>
+  <updated>2026-06-14T00:00:00.000Z</updated>
+  <summary>多數發行合約採 100% recoup 後才分潤；回本後中位數分潤約 50/50，導致開發者現金流吃緊，易陷入「發行商跑步機」。 友善條款：回本前即給開發者比例（如 70/30），回本後提高開發者分潤（如 70%），可大幅改善續作資金。 風險條款警示：多重…</summary>
+  
+</entry>
+<entry>
+  <title>2026-06-01_焦慮變現與社群比較</title>
+  <link href="https://blog.harrison-chen.dev/notes/%E7%84%A6%E6%85%AE%E8%AE%8A%E7%8F%BE%E8%88%87%E7%A4%BE%E7%BE%A4%E6%AF%94%E8%BC%83/"/>
+  <id>https://blog.harrison-chen.dev/notes/%E7%84%A6%E6%85%AE%E8%AE%8A%E7%8F%BE%E8%88%87%E7%A4%BE%E7%BE%A4%E6%AF%94%E8%BC%83/</id>
+  <published>2026-06-14T00:00:00.000Z</published>
+  <updated>2026-06-14T00:00:00.000Z</updated>
+  <summary>這篇 Threads…</summary>
+  <category term="social-media"/><category term="anxiety"/><category term="self-growth"/><category term="attention-economy"/>
+</entry>
+<entry>
+  <title>2026-06-06_Deadline_Savior_Procrastination_Indie_Game_Dev</title>
+  <link href="https://blog.harrison-chen.dev/notes/deadline-savior-procrastination-indie-game-dev/"/>
+  <id>https://blog.harrison-chen.dev/notes/deadline-savior-procrastination-indie-game-dev/</id>
+  <published>2026-06-14T00:00:00.000Z</published>
+  <updated>2026-06-14T00:00:00.000Z</updated>
+  <summary>作者 Shih-young Lin 分享自己作為獨立遊戲開發者，如何在拖延、焦慮與存款壓力中開發《死線勇者（Deadline Savior）》。他發現自己的拖延並非不會規劃，而是「太會規劃」導致一開始就過度想像終點、陷入恐慌。</summary>
+  <category term="productivity"/><category term="procrastination"/><category term="indie-game-dev"/><category term="game-design"/><category term="deadline-savior"/>
+</entry>
+<entry>
+  <title>你真的是 Beta，還是只是站在別人的指數裡？</title>
+  <link href="https://blog.harrison-chen.dev/notes/%E4%BD%A0%E7%9C%9F%E7%9A%84%E6%98%AFbeta%E9%82%84%E6%98%AF%E7%AB%99%E5%9C%A8%E5%88%A5%E4%BA%BA%E7%9A%84%E6%8C%87%E6%95%B8%E8%A3%A1/"/>
+  <id>https://blog.harrison-chen.dev/notes/%E4%BD%A0%E7%9C%9F%E7%9A%84%E6%98%AFbeta%E9%82%84%E6%98%AF%E7%AB%99%E5%9C%A8%E5%88%A5%E4%BA%BA%E7%9A%84%E6%8C%87%E6%95%B8%E8%A3%A1/</id>
+  <published>2026-04-01T00:00:00.000Z</published>
+  <updated>2026-04-01T00:00:00.000Z</updated>
+  <summary>你以為自己是「Beta」，多半是因為站錯市場、用錯指標在衡量自己；先建立一套「平行坐標」再逐步轉移。 以「低耗損的投入」與「學習曲線斜率」作為定位辨識訊號；尋找「小而能近乎壟斷、但足以支撐夢想」的利基。…</summary>
+  
+</entry>
+<entry>
+  <title>內耗與大腦 DMN：三招快速「關機重啟」法（5-4-3-2-1 著地法、冷水拍後頸、4-7-8 呼吸）</title>
+  <link href="https://blog.harrison-chen.dev/notes/%E5%85%A7%E8%80%97%E8%88%87dmn-%E4%B8%89%E6%8B%9B%E5%BF%AB%E9%80%9F%E9%97%9C%E6%A9%9F%E6%B3%95-threads-%E4%B8%80%E5%88%86%E9%90%98%E8%94%A1%E5%8D%9A/"/>
+  <id>https://blog.harrison-chen.dev/notes/%E5%85%A7%E8%80%97%E8%88%87dmn-%E4%B8%89%E6%8B%9B%E5%BF%AB%E9%80%9F%E9%97%9C%E6%A9%9F%E6%B3%95-threads-%E4%B8%80%E5%88%86%E9%90%98%E8%94%A1%E5%8D%9A/</id>
+  <published>2026-02-03T00:00:00.000Z</published>
+  <updated>2026-02-03T00:00:00.000Z</updated>
+  <summary>內耗與大腦的 DMN（Default Mode Network，預設模式網路）相關：人在未專注於具體任務時，DMN 會啟動，容易反芻過去或焦慮未來。 三個「關機」小撇步，幫助從焦慮切回到穩定感知或副交感狀態： 1) 5-4-3-2-1 著地法 2) 冷水拍後頸（或冰毛巾） 3)…</summary>
+  
+</entry>
+<entry>
+  <title>獨立遊戲開發者必讀！新聞稿何時寄？日媒分析兩大「黃金時機」助攻報導率</title>
+  <link href="https://blog.harrison-chen.dev/notes/indie-game-press-release-timing-guide-ludens-media/"/>
+  <id>https://blog.harrison-chen.dev/notes/indie-game-press-release-timing-guide-ludens-media/</id>
+  <published>2026-01-22T00:00:00.000Z</published>
+  <updated>2026-01-22T00:00:00.000Z</updated>
+  <summary>兩大黃金發布時機：1) 發售日（或發售窗口）確定時；2) 正式上市當天。這兩個節點最能驅動媒體撰稿與讀者行動。 避免在「剛開始開發」或僅是「小修小補」時單獨發稿，除非包裝成「重大轉折」（如結束 EA、重大系統更新、跨平台上線）。…</summary>
+  
+</entry>
+<entry>
+  <title>『魔法少女之魔女審判』開發者專訪—重點整理與摘要</title>
+  <link href="https://blog.harrison-chen.dev/notes/%E9%AD%94%E5%AF%A9-%E9%96%8B%E7%99%BC%E8%80%85%E5%B0%88%E8%A8%AA-%E9%87%8D%E9%BB%9E%E6%95%B4%E7%90%86/"/>
+  <id>https://blog.harrison-chen.dev/notes/%E9%AD%94%E5%AF%A9-%E9%96%8B%E7%99%BC%E8%80%85%E5%B0%88%E8%A8%AA-%E9%87%8D%E9%BB%9E%E6%95%B4%E7%90%86/</id>
+  <published>2026-01-20T00:00:00.000Z</published>
+  <updated>2026-01-20T00:00:00.000Z</updated>
+  <summary>以「劇本驅動」為核心的辯論×推理ADV，刻意降低動作性，強化閱讀與演出。 影響來源：遊戲設計受《彈丸論破》《逆轉裁判》啟發；視覺與演出深受 TYPE-MOON 視覺小說影響（鏡頭、構圖、剪影）。 審判系統多次推翻重做：從類ADV 2D 介面，改為 3D…</summary>
+  <category term="遊戲開發"/><category term="專訪"/><category term="魔法少女之魔女審判"/><category term="Acacia"/><category term="2025"/><category term="直播策略"/><category term="系統設計"/>
+</entry>
+<entry>
+  <title>LinkedIn 遠距工作心得與提高申請成功率的 3 招（@berry_greatful）</title>
+  <link href="https://blog.harrison-chen.dev/notes/threads-linkedin-remote-tips-berry-greatful/"/>
+  <id>https://blog.harrison-chen.dev/notes/threads-linkedin-remote-tips-berry-greatful/</id>
+  <published>2026-01-19T00:00:00.000Z</published>
+  <updated>2026-01-19T00:00:00.000Z</updated>
+  <summary>只要英語能工作溝通，LinkedIn 的遠距職缺是「寶庫」。 三招提升成功率： 1) 搶佔先機（黃金 30 人法則：申請人數 &lt; 30 時盡快投遞）； 2) 英語程度選「Conversational」即可（多數職缺不必 Native）； 3) 善用 Quick Apply +…</summary>
+  <category term="job-search"/><category term="LinkedIn"/><category term="remote"/><category term="web3"/><category term="tips"/><category term="zh"/>
+</entry>
+<entry>
+  <title>買小房租大房策略討論（Buy Small, Rent Big）</title>
+  <link href="https://blog.harrison-chen.dev/notes/buy-small-rent-big-strategy-threads-le-1115/"/>
+  <id>https://blog.harrison-chen.dev/notes/buy-small-rent-big-strategy-threads-le-1115/</id>
+  <published>2026-01-18T00:00:00.000Z</published>
+  <updated>2026-01-18T00:00:00.000Z</updated>
+  <summary>核心：以投報較佳的「小房」作為資產與現金流工具，同時在租售比偏低的「高價大房」市場中租屋，提升居住品質、壓低實際居住成本。…</summary>
+  
+</entry>
+<entry>
+  <title>シーンに合わせた「表情」づくりでキャラクターに命を吹き込む 知られざるフェイシャルアニメーションの世界</title>
+  <link href="https://blog.harrison-chen.dev/notes/cygames-facial-animation-interview/"/>
+  <id>https://blog.harrison-chen.dev/notes/cygames-facial-animation-interview/</id>
+  <published>2025-12-12T00:00:00.000Z</published>
+  <updated>2025-12-12T00:00:00.000Z</updated>
+  <summary>TL;DR（zh-TW） 臉部動畫是提升遊戲沉浸感的關鍵；需同時兼備技術與藝術，深度理解角色與情境。 關鍵技術：手付け與（パフォーマンス）モーションキャプチャ結合、精準的眼神與唇形同步、口腔與耳周等微動作、以及運行時（ランタイム）處理。 『グランブルーファンタジー…</summary>
+  <category term="3DCG"/><category term="Facial-Animation"/><category term="GameDev"/><category term="Cygames"/><category term="Interview"/>
+</entry>
+<entry>
+  <title>如何保證你的提案會被忽略／退件（整理筆記）</title>
+  <link href="https://blog.harrison-chen.dev/notes/%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AD%89%E4%BD%A0%E7%9A%84%E6%8F%90%E6%A1%88%E6%9C%83%E8%A2%AB%E5%BF%BD%E7%95%A5%E6%88%96%E9%80%80%E4%BB%B6/"/>
+  <id>https://blog.harrison-chen.dev/notes/%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AD%89%E4%BD%A0%E7%9A%84%E6%8F%90%E6%A1%88%E6%9C%83%E8%A2%AB%E5%BF%BD%E7%95%A5%E6%88%96%E9%80%80%E4%BB%B6/</id>
+  <published>2020-07-24T00:00:00.000Z</published>
+  <updated>2026-04-14T00:00:00.000Z</updated>
+  <summary>會被退件的九大主因：缺乏明確賣點、沒有研究對的發行商／投資人、規模與經驗不符、預算不合理、估值浮誇、資訊過多成雜訊、關鍵資訊不足、沒有可玩版或玩法影片、缺乏創作主見。…</summary>
+  <category term="pitching"/><category term="indie-games"/><category term="publishing"/><category term="VC"/><category term="budget"/><category term="scope"/><category term="prototype"/><category term="product-market-fit"/>
+</entry>
+</feed>
