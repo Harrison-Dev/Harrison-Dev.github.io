@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4-7-8 呼吸 · Breathe</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=Inter:wght@300;400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <script>
+        document.documentElement.dataset.theme = new Date().getHours() >= 18 || new Date().getHours() < 7 ? 'night' : 'day';
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            color-scheme: light;
+            --font-sans: 'PingFang TC', 'Noto Sans TC', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Microsoft JhengHei', sans-serif;
+            --bg-1: #f4ede0;
+            --bg-2: #e8dccb;
+            --ink: #3a3530;
+            --ink-soft: #6b6258;
+            --ink-faint: #9a9085;
+            --shadow: rgba(58, 53, 48, 0.08);
+            --line: rgba(58, 53, 48, 0.1);
+            --control-bg: rgba(255, 255, 255, 0.5);
+            --control-hover: rgba(255, 255, 255, 0.7);
+            --primary: #3a3530;
+            --primary-hover: #2a2520;
+            --primary-text: #f4ede0;
+            --active: #5a8aab;
+            --phase-inhale: #5a8aab;
+            --phase-hold: #b8884e;
+            --phase-exhale: #6e8a6a;
+            --countdown: var(--ink-soft);
+            --blob-blue: #c9d9e8;
+            --blob-warm: #e8d4b8;
+            --blob-green: #d4e0c4;
+            --ring-soft: rgba(58, 53, 48, 0.06);
+            --ring-mid: rgba(58, 53, 48, 0.09);
+            --ring-strong: rgba(58, 53, 48, 0.12);
+        }
+
+        :root[data-theme="night"] {
+            color-scheme: dark;
+            --bg-1: #111315;
+            --bg-2: #1b2024;
+            --ink: #e8e0d4;
+            --ink-soft: #d2c7b9;
+            --ink-faint: #aaa095;
+            --shadow: rgba(0, 0, 0, 0.35);
+            --line: rgba(255, 255, 255, 0.12);
+            --control-bg: rgba(255, 255, 255, 0.08);
+            --control-hover: rgba(255, 255, 255, 0.13);
+            --primary: #d8d0c4;
+            --primary-hover: #efe6d9;
+            --primary-text: #17191b;
+            --active: #7aa6c7;
+            --phase-inhale: #9fd0f0;
+            --phase-hold: #f0ba62;
+            --phase-exhale: #b7d9a8;
+            --countdown: #e0d6ca;
+            --blob-blue: #27465d;
+            --blob-warm: #4b3527;
+            --blob-green: #33472f;
+            --ring-soft: rgba(255, 255, 255, 0.06);
+            --ring-mid: rgba(255, 255, 255, 0.09);
+            --ring-strong: rgba(255, 255, 255, 0.13);
+        }
+
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background: linear-gradient(160deg, var(--bg-1), var(--bg-2));
+            color: var(--ink);
+            font-family: var(--font-sans);
+            font-weight: 300;
+            -webkit-font-smoothing: antialiased;
+            position: relative;
+            transition: background 0.4s ease, color 0.4s ease;
+        }
+
+        .bg-blobs {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.55;
+            animation: drift 30s ease-in-out infinite;
+        }
+
+        .blob-1 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--blob-blue) 0%, transparent 70%);
+            top: -150px;
+            left: -150px;
+        }
+
+        .blob-2 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--blob-warm) 0%, transparent 70%);
+            bottom: -100px;
+            right: -100px;
+            animation-delay: -10s;
+        }
+
+        .blob-3 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--blob-green) 0%, transparent 70%);
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: -20s;
+        }
+
+        @keyframes drift {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                transform: translate(30px, -40px) scale(1.08);
+            }
+
+            66% {
+                transform: translate(-20px, 30px) scale(0.95);
+            }
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.25 0 0 0 0 0.2 0 0 0 0.025 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .stage {
+            position: relative;
+            min-height: 100vh;
+            min-height: 100svh;
+            height: 100vh;
+            height: 100svh;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            z-index: 2;
+        }
+
+        header {
+            padding: 28px 36px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand {
+            font-weight: 400;
+            font-size: 18px;
+            color: var(--ink);
+        }
+
+        .brand-mark {
+            color: #5a8aab;
+        }
+
+        .back-link {
+            color: var(--ink-faint);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: var(--ink-soft);
+        }
+
+        .brand-sep {
+            color: var(--ink-faint);
+            margin: 0 8px;
+        }
+
+        .theme-toggle {
+            width: 38px;
+            height: 38px;
+            display: grid;
+            place-items: center;
+            border: 1px solid var(--line);
+            border-radius: 50%;
+            background: var(--control-bg);
+            color: var(--ink-soft);
+            cursor: pointer;
+            box-shadow: 0 2px 8px var(--shadow);
+            transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--control-hover);
+            color: var(--ink);
+            transform: translateY(-1px);
+        }
+
+        .cycle-counter {
+            font-size: 12px;
+            letter-spacing: 0.15em;
+            color: var(--ink-soft);
+            text-transform: uppercase;
+        }
+
+        .cycle-counter b {
+            color: var(--ink);
+            font-weight: 500;
+            margin-left: 6px;
+            font-size: 14px;
+            letter-spacing: 0;
+        }
+
+        .center {
+            display: grid;
+            place-items: center;
+            position: relative;
+            padding: 20px;
+        }
+
+        .orb-wrapper {
+            position: relative;
+            width: min(72vmin, 500px);
+            height: min(72vmin, 500px);
+            display: grid;
+            place-items: center;
+        }
+
+        .ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid var(--ring-soft);
+            transition: transform 4s cubic-bezier(0.4, 0, 0.6, 1);
+        }
+
+        .ring-1 {
+            width: 100%;
+            height: 100%;
+        }
+
+        .ring-2 {
+            width: 75%;
+            height: 75%;
+            border-color: var(--ring-mid);
+        }
+
+        .ring-3 {
+            width: 52%;
+            height: 52%;
+            border-color: var(--ring-strong);
+        }
+
+        .orb {
+            position: relative;
+            width: 36%;
+            height: 36%;
+            border-radius: 50%;
+            background:
+                radial-gradient(circle at 35% 30%,
+                    rgba(255, 255, 255, 0.6) 0%,
+                    rgba(123, 167, 196, 0.5) 30%,
+                    rgba(123, 167, 196, 0.25) 60%,
+                    rgba(123, 167, 196, 0.1) 100%);
+            box-shadow:
+                0 0 80px rgba(123, 167, 196, 0.35),
+                inset 0 0 60px rgba(255, 255, 255, 0.3),
+                inset 0 -20px 40px rgba(123, 167, 196, 0.2);
+            transform: scale(0.55);
+            transition:
+                transform 4s cubic-bezier(0.45, 0, 0.55, 1),
+                background 1.8s ease,
+                box-shadow 1.8s ease;
+        }
+
+        .orb::after {
+            content: '';
+            position: absolute;
+            inset: -20%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(123, 167, 196, 0.15) 0%, transparent 60%);
+            z-index: -1;
+            transition: background 1.5s ease;
+        }
+
+        .orb.inhale {
+            transform: scale(1);
+            transition:
+                transform 4s cubic-bezier(0.45, 0, 0.55, 1),
+                background 1.5s ease,
+                box-shadow 1.5s ease;
+        }
+
+        .orb.hold {
+            transform: scale(1);
+            background:
+                radial-gradient(circle at 35% 30%,
+                    rgba(255, 255, 255, 0.6) 0%,
+                    rgba(212, 165, 116, 0.5) 30%,
+                    rgba(212, 165, 116, 0.25) 60%,
+                    rgba(212, 165, 116, 0.1) 100%);
+            box-shadow:
+                0 0 80px rgba(212, 165, 116, 0.4),
+                inset 0 0 60px rgba(255, 255, 255, 0.3),
+                inset 0 -20px 40px rgba(212, 165, 116, 0.2);
+            transition: transform 0.5s ease, background 1.5s ease, box-shadow 1.5s ease;
+        }
+
+        .orb.hold::after {
+            background: radial-gradient(circle, rgba(212, 165, 116, 0.18) 0%, transparent 60%);
+        }
+
+        .orb.exhale {
+            transform: scale(0.5);
+            background:
+                radial-gradient(circle at 35% 30%,
+                    rgba(255, 255, 255, 0.5) 0%,
+                    rgba(143, 168, 136, 0.45) 30%,
+                    rgba(143, 168, 136, 0.22) 60%,
+                    rgba(143, 168, 136, 0.08) 100%);
+            box-shadow:
+                0 0 50px rgba(143, 168, 136, 0.3),
+                inset 0 0 40px rgba(255, 255, 255, 0.2),
+                inset 0 -15px 30px rgba(143, 168, 136, 0.18);
+            transition:
+                transform 8s cubic-bezier(0.45, 0, 0.55, 1),
+                background 1.5s ease,
+                box-shadow 1.5s ease;
+        }
+
+        .orb.exhale::after {
+            background: radial-gradient(circle, rgba(143, 168, 136, 0.12) 0%, transparent 60%);
+        }
+
+        .phase-label {
+            position: absolute;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        .phase-text {
+            font-weight: 300;
+            font-size: clamp(32px, 5.5vmin, 50px);
+            letter-spacing: 0.02em;
+            margin-bottom: 14px;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 0.6s ease, transform 0.6s ease, color 1s ease;
+            text-shadow: 0 1px 30px rgba(255, 255, 255, 0.5);
+        }
+
+        .phase-text.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .phase-text.inhale {
+            color: var(--phase-inhale);
+        }
+
+        .phase-text.hold {
+            color: var(--phase-hold);
+        }
+
+        .phase-text.exhale {
+            color: var(--phase-exhale);
+        }
+
+        .countdown {
+            font-weight: 300;
+            font-size: 20px;
+            color: var(--countdown);
+            letter-spacing: 0.2em;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .phase-text.idle {
+            color: var(--ink);
+            font-size: clamp(22px, 3.8vmin, 34px);
+        }
+
+        footer {
+            padding: 0 36px 36px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 22px;
+        }
+
+        .instruction {
+            font-size: 15px;
+            color: var(--ink-soft);
+            text-align: center;
+        }
+
+        .instruction-numbers {
+            font-weight: 400;
+            color: var(--ink);
+            margin: 0 3px;
+        }
+
+        .cycle-selector {
+            display: flex;
+            gap: 6px;
+            background: var(--control-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--line);
+            border-radius: 100px;
+            padding: 4px;
+        }
+
+        .pill {
+            background: transparent;
+            border: none;
+            padding: 8px 16px;
+            font-family: var(--font-sans);
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--ink-soft);
+            cursor: pointer;
+            border-radius: 100px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .pill:hover {
+            color: var(--ink);
+        }
+
+        .pill.active {
+            background: var(--primary);
+            color: var(--primary-text);
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
+        .pill .small {
+            font-size: 10px;
+            opacity: 0.7;
+            margin-left: 4px;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            background: var(--control-bg);
+            backdrop-filter: blur(10px);
+            color: var(--ink);
+            border: 1px solid var(--line);
+            padding: 14px 36px;
+            font-family: var(--font-sans);
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 100px;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
+        .btn:hover {
+            background: var(--control-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px var(--shadow);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--primary-text);
+            border-color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            color: var(--primary-text);
+        }
+
+        .btn-icon {
+            width: 46px;
+            height: 46px;
+            padding: 0;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+        }
+
+        .btn-icon.active {
+            background: var(--active);
+            border-color: var(--active);
+            color: white;
+        }
+
+        .ambient-select {
+            background-color: var(--control-bg);
+            backdrop-filter: blur(10px);
+            color: var(--ink);
+            border: 1px solid var(--line);
+            padding: 0 38px 0 18px;
+            height: 46px;
+            font-family: var(--font-sans);
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 100px;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M2 4l3 3 3-3' stroke='%236b6258' stroke-width='1.2' fill='none'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
+        .ambient-select:focus {
+            outline: none;
+        }
+
+        .ambient-select option {
+            background: var(--bg-1);
+            color: var(--ink);
+        }
+
+        @media (max-width: 860px) {
+            header {
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .brand {
+                font-size: 16px;
+            }
+
+            .header-actions {
+                align-items: center;
+            }
+
+            .orb-wrapper {
+                width: min(70vmin, 430px);
+                height: min(70vmin, 430px);
+            }
+        }
+
+        @media (max-width: 640px) {
+
+            html,
+            body {
+                height: auto;
+                min-height: 100%;
+                overflow-x: hidden;
+                overflow-y: auto;
+            }
+
+            body {
+                min-height: 100svh;
+            }
+
+            .stage {
+                min-height: 100svh;
+                height: auto;
+                grid-template-rows: auto minmax(300px, 1fr) auto;
+            }
+
+            header {
+                padding: max(18px, env(safe-area-inset-top)) 18px 0;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 14px;
+            }
+
+            .brand {
+                line-height: 1.4;
+                overflow-wrap: anywhere;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .cycle-counter {
+                text-align: right;
+            }
+
+            .center {
+                padding: 14px 16px;
+            }
+
+            .orb-wrapper {
+                width: min(78vw, 360px);
+                height: min(78vw, 360px);
+            }
+
+            footer {
+                padding: 0 16px 22px;
+                gap: 16px;
+            }
+
+            .cycle-selector {
+                width: 100%;
+                justify-content: space-between;
+                overflow-x: auto;
+            }
+
+            .pill {
+                flex: 1;
+                min-width: 58px;
+            }
+
+            .btn-row {
+                width: 100%;
+                gap: 10px;
+            }
+
+            .btn-primary {
+                flex: 1;
+                min-width: 120px;
+            }
+
+            .ambient-select {
+                flex: 1;
+                min-width: 140px;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .pill {
+                padding: 7px 11px;
+                font-size: 11px;
+            }
+
+            .pill .small {
+                display: none;
+            }
+
+            .btn {
+                padding: 12px 28px;
+                font-size: 15px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .brand {
+                font-size: 15px;
+            }
+
+            .cycle-counter {
+                font-size: 11px;
+            }
+
+            .theme-toggle {
+                width: 42px;
+                height: 42px;
+            }
+
+            .phase-text {
+                font-size: clamp(28px, 10vw, 40px);
+            }
+        }
+
+        @media (max-height: 680px) and (orientation: landscape) {
+
+            html,
+            body {
+                height: auto;
+                overflow-y: auto;
+            }
+
+            .stage {
+                height: auto;
+                min-height: 100vh;
+                min-height: 100svh;
+            }
+
+            header {
+                padding-top: 16px;
+            }
+
+            .center {
+                padding: 8px 16px;
+            }
+
+            .orb-wrapper {
+                width: min(48vmin, 320px);
+                height: min(48vmin, 320px);
+            }
+
+            footer {
+                gap: 10px;
+                padding-bottom: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="stage">
+        <header>
+            <div class="brand">
+                <a href="/playground/" class="back-link">← Playground</a>
+                <span class="brand-sep">/</span>
+                Breathe · <span class="brand-mark">4 7 8</span>
+            </div>
+            <div class="header-actions">
+                <button class="theme-toggle" id="themeBtn" type="button" title="切換日夜模式" aria-label="切換日夜模式">
+                    <span id="themeIcon">☾</span>
+                </button>
+                <div class="cycle-counter">Cycle <b id="cycle">0 / 8</b></div>
+            </div>
+        </header>
+
+        <main class="center">
+            <div class="orb-wrapper">
+                <div class="ring ring-1"></div>
+                <div class="ring ring-2"></div>
+                <div class="ring ring-3"></div>
+                <div class="orb" id="orb"></div>
+                <div class="phase-label">
+                    <div class="phase-text idle show" id="phaseText">準備好了嗎</div>
+                    <div class="countdown" id="countdown"></div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="instruction">
+                吸氣<span class="instruction-numbers">4</span> · 屏息<span class="instruction-numbers">7</span> · 吐氣<span
+                    class="instruction-numbers">8</span>
+            </div>
+
+            <div class="cycle-selector" id="cycleSelector">
+                <button class="pill" data-cycles="4">4<span class="small">2½ min</span></button>
+                <button class="pill active" data-cycles="8">8<span class="small">5 min</span></button>
+                <button class="pill" data-cycles="12">12<span class="small">7½ min</span></button>
+                <button class="pill" data-cycles="16">16<span class="small">10 min</span></button>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn btn-primary" id="startBtn">開始</button>
+                <button class="btn btn-icon" id="soundBtn" title="提示音">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+                        <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+                    </svg>
+                </button>
+                <button class="btn btn-icon" id="ambientBtn" title="背景音">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242" />
+                        <path d="M16 14v6M8 14v6M12 16v6" />
+                    </svg>
+                </button>
+                <select class="ambient-select" id="ambientSelect">
+                    <option value="rain">雨聲</option>
+                    <option value="ocean">海浪</option>
+                    <option value="forest">森林</option>
+                    <option value="white">白噪音</option>
+                </select>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const orb = document.getElementById('orb');
+        const phaseText = document.getElementById('phaseText');
+        const countdown = document.getElementById('countdown');
+        const cycleEl = document.getElementById('cycle');
+        const startBtn = document.getElementById('startBtn');
+        const soundBtn = document.getElementById('soundBtn');
+        const ambientBtn = document.getElementById('ambientBtn');
+        const ambientSelect = document.getElementById('ambientSelect');
+        const cycleSelector = document.getElementById('cycleSelector');
+        const themeBtn = document.getElementById('themeBtn');
+        const themeIcon = document.getElementById('themeIcon');
+
+        function getDefaultTheme() {
+            const hour = new Date().getHours();
+            return hour >= 18 || hour < 7 ? 'night' : 'day';
+        }
+
+        function setTheme(theme) {
+            const activeTheme = theme === 'night' ? 'night' : 'day';
+            const isNight = activeTheme === 'night';
+            document.documentElement.dataset.theme = activeTheme;
+            themeIcon.textContent = isNight ? '☀' : '☾';
+            themeBtn.title = isNight ? '切換為日間模式' : '切換為夜間模式';
+            themeBtn.setAttribute('aria-label', themeBtn.title);
+        }
+
+        let TOTAL_CYCLES = 8;
+        const PHASES = [
+            { name: 'inhale', label: '吸氣', duration: 4 },
+            { name: 'hold', label: '屏息', duration: 7 },
+            { name: 'exhale', label: '吐氣', duration: 8 }
+        ];
+
+        let running = false;
+        let cycle = 0;
+        let phaseIdx = 0;
+        let timeLeft = 0;
+        let timerId = null;
+        let soundOn = true;
+        let audioCtx = null;
+
+        let ambientOn = false;
+        let ambientNodes = null;
+        let currentAmbient = 'rain';
+
+        cycleSelector.addEventListener('click', (e) => {
+            const btn = e.target.closest('.pill');
+            if (!btn || running) return;
+            cycleSelector.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            TOTAL_CYCLES = parseInt(btn.dataset.cycles, 10);
+            cycleEl.textContent = `0 / ${TOTAL_CYCLES}`;
+        });
+
+        function ensureAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            return audioCtx;
+        }
+
+        // Bell-like phase tones — singing bowl style with harmonics, strike, and reverb
+        function playBell(baseFreq, volume = 0.5, duration = 2.5) {
+            if (!soundOn) return;
+            const ctx = ensureAudio();
+            const now = ctx.currentTime;
+
+            const master = ctx.createGain();
+            master.gain.setValueAtTime(0.0001, now);
+            master.gain.exponentialRampToValueAtTime(volume, now + 0.03);
+            master.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+            master.connect(ctx.destination);
+
+            const reverb = ctx.createConvolver();
+            reverb.buffer = createReverbBuffer(ctx, 2.5, 1.8);
+            const wet = ctx.createGain();
+            wet.gain.value = 0.18;
+            reverb.connect(wet).connect(master);
+
+            const partials = [
+                { ratio: 1, gain: 1, decay: 1.0 },
+                { ratio: 2.01, gain: 0.22, decay: 0.7 },
+                { ratio: 2.99, gain: 0.12, decay: 0.55 },
+                { ratio: 4.1, gain: 0.08, decay: 0.4 }
+            ];
+
+            partials.forEach(part => {
+                const osc = ctx.createOscillator();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(baseFreq * part.ratio, now);
+
+                const gain = ctx.createGain();
+                gain.gain.setValueAtTime(0.0001, now);
+                gain.gain.linearRampToValueAtTime(volume * part.gain, now + 0.008);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + duration * part.decay);
+
+                osc.connect(gain);
+                gain.connect(master);
+                gain.connect(reverb);
+                osc.start(now);
+                osc.stop(now + duration);
+            });
+
+            const strike = ctx.createBufferSource();
+            strike.buffer = createNoiseBurst(ctx, 0.03);
+            const strikeFilter = ctx.createBiquadFilter();
+            strikeFilter.type = 'bandpass';
+            strikeFilter.frequency.value = 2200;
+            strikeFilter.Q.value = 0.8;
+            const strikeGain = ctx.createGain();
+            strikeGain.gain.setValueAtTime(0.16 * volume, now);
+            strikeGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
+            strike.connect(strikeFilter).connect(strikeGain).connect(master);
+            strike.start(now);
+        }
+
+        function createNoiseBurst(ctx, duration) {
+            const buffer = ctx.createBuffer(1, ctx.sampleRate * duration, ctx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < data.length; i++) {
+                data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
+            }
+            return buffer;
+        }
+
+        function createReverbBuffer(ctx, seconds, decay) {
+            const rate = ctx.sampleRate;
+            const length = rate * seconds;
+            const buffer = ctx.createBuffer(2, length, rate);
+            for (let channel = 0; channel < 2; channel++) {
+                const data = buffer.getChannelData(channel);
+                for (let i = 0; i < length; i++) {
+                    data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, decay);
+                }
+            }
+            return buffer;
+        }
+
+        function playPhaseTone(phase) {
+            const tones = {
+                inhale: 220,
+                hold: 293.66,
+                exhale: 174.61
+            };
+            playBell(tones[phase] || 220, 0.34, 2.8);
+        }
+
+        function updateVisual(phase) {
+            orb.className = 'orb';
+            if (phase) orb.classList.add(phase.name);
+
+            phaseText.className = 'phase-text';
+            if (!phase) {
+                phaseText.textContent = '準備好了嗎';
+                phaseText.classList.add('idle', 'show');
+                countdown.textContent = '';
+                return;
+            }
+
+            phaseText.textContent = phase.label;
+            phaseText.classList.add(phase.name, 'show');
+            countdown.textContent = timeLeft;
+        }
+
+        function stopAmbient() {
+            if (!ambientNodes) return;
+            ambientNodes.stop();
+            ambientNodes = null;
+        }
+
+        function buildAmbient(type) {
+            const ctx = ensureAudio();
+            const output = ctx.createGain();
+            output.gain.value = 0.0001;
+            output.connect(ctx.destination);
+
+            const nodes = [];
+            const addNode = node => {
+                nodes.push(node);
+                return node;
+            };
+
+            const createNoise = (color = 'white') => {
+                const buffer = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+                let last = 0;
+                for (let i = 0; i < data.length; i++) {
+                    const white = Math.random() * 2 - 1;
+                    if (color === 'white') {
+                        data[i] = white;
+                    } else if (color === 'pink') {
+                        last = 0.98 * last + 0.02 * white;
+                        data[i] = last * 3.5;
+                    } else {
+                        last = (last + 0.02 * white) / 1.02;
+                        data[i] = last * 5.5;
+                    }
+                }
+                const src = addNode(ctx.createBufferSource());
+                src.buffer = buffer;
+                src.loop = true;
+                return src;
+            };
+
+            if (type === 'rain') {
+                const noise = createNoise('pink');
+                const filter = addNode(ctx.createBiquadFilter());
+                filter.type = 'bandpass';
+                filter.frequency.value = 2500;
+                filter.Q.value = 0.3;
+                const gain = addNode(ctx.createGain());
+                gain.gain.value = 0.18;
+                noise.connect(filter).connect(gain).connect(output);
+                noise.start();
+            } else if (type === 'ocean') {
+                const noise = createNoise('brown');
+                const filter = addNode(ctx.createBiquadFilter());
+                filter.type = 'lowpass';
+                filter.frequency.value = 900;
+                const lfo = addNode(ctx.createOscillator());
+                const lfoGain = addNode(ctx.createGain());
+                lfo.frequency.value = 0.08;
+                lfoGain.gain.value = 350;
+                lfo.connect(lfoGain).connect(filter.frequency);
+                const gain = addNode(ctx.createGain());
+                gain.gain.value = 0.22;
+                noise.connect(filter).connect(gain).connect(output);
+                noise.start();
+                lfo.start();
+            } else if (type === 'forest') {
+                const noise = createNoise('pink');
+                const filter = addNode(ctx.createBiquadFilter());
+                filter.type = 'highpass';
+                filter.frequency.value = 1200;
+                const gain = addNode(ctx.createGain());
+                gain.gain.value = 0.08;
+                noise.connect(filter).connect(gain).connect(output);
+                noise.start();
+
+                const chirp = addNode(ctx.createOscillator());
+                const chirpGain = addNode(ctx.createGain());
+                chirp.type = 'sine';
+                chirp.frequency.value = 880;
+                chirpGain.gain.value = 0.0001;
+                chirp.connect(chirpGain).connect(output);
+                chirp.start();
+
+                const triggerBird = () => {
+                    if (!ambientOn || currentAmbient !== 'forest') return;
+                    const now = ctx.currentTime;
+                    chirp.frequency.setValueAtTime(880 + Math.random() * 220, now);
+                    chirp.frequency.exponentialRampToValueAtTime(1320 + Math.random() * 280, now + 0.12);
+                    chirpGain.gain.cancelScheduledValues(now);
+                    chirpGain.gain.setValueAtTime(0.0001, now);
+                    chirpGain.gain.exponentialRampToValueAtTime(0.03, now + 0.02);
+                    chirpGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
+                    setTimeout(triggerBird, 2200 + Math.random() * 2600);
+                };
+                setTimeout(triggerBird, 1200);
+            } else {
+                const noise = createNoise('white');
+                const gain = addNode(ctx.createGain());
+                gain.gain.value = 0.12;
+                noise.connect(gain).connect(output);
+                noise.start();
+            }
+
+            output.gain.exponentialRampToValueAtTime(0.22, ctx.currentTime + 0.8);
+
+            return {
+                stop() {
+                    output.gain.cancelScheduledValues(ctx.currentTime);
+                    output.gain.setValueAtTime(output.gain.value, ctx.currentTime);
+                    output.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.5);
+                    setTimeout(() => nodes.forEach(node => node.stop && node.stop()), 600);
+                }
+            };
+        }
+
+        function setAmbient(on) {
+            ambientOn = on;
+            ambientBtn.classList.toggle('active', ambientOn);
+            if (!ambientOn) {
+                stopAmbient();
+                return;
+            }
+            stopAmbient();
+            ambientNodes = buildAmbient(currentAmbient);
+        }
+
+        function nextPhase() {
+            if (!running) return;
+
+            if (phaseIdx === 0 && timeLeft === 0) {
+                cycle += 1;
+                cycleEl.textContent = `${cycle} / ${TOTAL_CYCLES}`;
+                if (cycle > TOTAL_CYCLES) {
+                    finishSession();
+                    return;
+                }
+            }
+
+            const phase = PHASES[phaseIdx];
+            timeLeft = phase.duration;
+            updateVisual(phase);
+            playPhaseTone(phase.name);
+
+            timerId = setInterval(() => {
+                timeLeft -= 1;
+                countdown.textContent = timeLeft > 0 ? timeLeft : '';
+                if (timeLeft > 0) return;
+
+                clearInterval(timerId);
+                phaseIdx = (phaseIdx + 1) % PHASES.length;
+                nextPhase();
+            }, 1000);
+        }
+
+        function finishSession() {
+            running = false;
+            cycle = 0;
+            phaseIdx = 0;
+            clearInterval(timerId);
+            timerId = null;
+            updateVisual(null);
+            cycleEl.textContent = `0 / ${TOTAL_CYCLES}`;
+            startBtn.textContent = '再來一次';
+            playBell(196, 0.28, 3.4);
+        }
+
+        function startSession() {
+            if (running) return;
+            running = true;
+            cycle = 0;
+            phaseIdx = 0;
+            startBtn.textContent = '進行中';
+            nextPhase();
+        }
+
+        startBtn.addEventListener('click', () => {
+            ensureAudio();
+            startSession();
+        });
+
+        soundBtn.addEventListener('click', () => {
+            soundOn = !soundOn;
+            soundBtn.classList.toggle('active', soundOn);
+        });
+
+        ambientBtn.addEventListener('click', () => {
+            ensureAudio();
+            setAmbient(!ambientOn);
+        });
+
+        ambientSelect.addEventListener('change', (e) => {
+            currentAmbient = e.target.value;
+            if (ambientOn) {
+                setAmbient(true);
+            }
+        });
+
+        themeBtn.addEventListener('click', () => {
+            setTheme(document.documentElement.dataset.theme === 'night' ? 'day' : 'night');
+        });
+
+        setTheme(document.documentElement.dataset.theme || getDefaultTheme());
+        soundBtn.classList.add('active');
+        updateVisual(null);
+    </script>
+</body>
+
+</html>
