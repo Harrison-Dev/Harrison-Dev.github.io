@@ -29,15 +29,6 @@
   </url>
   
   <url>
-    <loc>https://blog.harrison-chen.dev/2026/07/12/vps-ntp-firewall/</loc>
-    
-    <lastmod>2026-09-19</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://blog.harrison-chen.dev/2024/12/14/vps%E5%BF%83%E5%BE%97%EF%BC%86%E9%83%A8%E7%BD%B2%E4%B8%80%E4%BA%9B%E5%B7%A5%E5%85%B7%E6%84%9F%E6%83%B3/</loc>
     
     <lastmod>2026-09-19</lastmod>
@@ -83,16 +74,7 @@
   </url>
   
   <url>
-    <loc>https://blog.harrison-chen.dev/2020/02/25/Game%20Physics/2D%20Collision%20Detection/</loc>
-    
-    <lastmod>2026-09-19</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.harrison-chen.dev/2020/04/25/Game%20Physics/Physics%20Constraint/</loc>
+    <loc>https://blog.harrison-chen.dev/2026/07/12/vps-ntp-firewall/</loc>
     
     <lastmod>2026-09-19</lastmod>
     
@@ -129,6 +111,24 @@
   
   <url>
     <loc>https://blog.harrison-chen.dev/2023/09/10/Travel/%E4%BA%AC%E9%83%BDBitSummit%E9%81%8A%E8%A8%98/</loc>
+    
+    <lastmod>2026-09-19</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.harrison-chen.dev/2020/04/25/Game%20Physics/Physics%20Constraint/</loc>
+    
+    <lastmod>2026-09-19</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.harrison-chen.dev/2020/02/25/Game%20Physics/2D%20Collision%20Detection/</loc>
     
     <lastmod>2026-09-19</lastmod>
     
@@ -270,20 +270,6 @@
   </url>
   
   <url>
-    <loc>https://blog.harrison-chen.dev/tags/NTP/</loc>
-    <lastmod>2026-09-19</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.harrison-chen.dev/tags/VPS/</loc>
-    <lastmod>2026-09-19</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://blog.harrison-chen.dev/tags/Docker/</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>weekly</changefreq>
@@ -333,7 +319,14 @@
   </url>
   
   <url>
-    <loc>https://blog.harrison-chen.dev/tags/Game-Physics/</loc>
+    <loc>https://blog.harrison-chen.dev/tags/NTP/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.harrison-chen.dev/tags/VPS/</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -389,6 +382,13 @@
   </url>
   
   <url>
+    <loc>https://blog.harrison-chen.dev/tags/Game-Physics/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://blog.harrison-chen.dev/tags/Unity/</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>weekly</changefreq>
@@ -426,13 +426,6 @@
   </url>
   
   <url>
-    <loc>https://blog.harrison-chen.dev/categories/Game-Physics/</loc>
-    <lastmod>2026-09-19</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://blog.harrison-chen.dev/categories/Game-Programming/</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>weekly</changefreq>
@@ -441,6 +434,13 @@
   
   <url>
     <loc>https://blog.harrison-chen.dev/categories/travel/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.harrison-chen.dev/categories/Game-Physics/</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
