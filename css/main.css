@@ -1432,7 +1432,7 @@ pre code {
     vertical-align: middle;
   }
   .links-of-author a::before {
-    background: #0d4dc2;
+    background: #67c88b;
     display: inline-block;
     margin-right: 3px;
     transform: translateY(-2px);
@@ -3175,4 +3175,7 @@ header.header {
 }
 .note-tag:hover {
   background: rgba(126,182,255,0.24);
+}
+.use-motion .animated {
+  animation-duration: 0.5s;
 }
