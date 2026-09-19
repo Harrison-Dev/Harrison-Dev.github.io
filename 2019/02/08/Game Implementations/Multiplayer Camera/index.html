@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.harrison-chen.dev","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.29.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":true}}</script><script src="/js/config.js" defer></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.harrison-chen.dev","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.29.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":100,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
 
     <meta name="description" content="You can also see my post in Bahamut. 最近在開發2D遊戲攝影機的時候，參考到一篇2D攝影機設計經典文章 就是2015年的這篇 Scroll Back - 2D 捲軸遊戲的攝影機理論與實務 其中有提到，在多人操作的時候，會希望攝影機能照到所有角色，這篇就將討論如何實做這件事。">
 <meta property="og:type" content="article">
@@ -34,7 +34,7 @@
 <meta property="og:image" content="https://i.imgur.com/V32E8zZ.png">
 <meta property="og:image" content="https://i.imgur.com/Z27MqQs.png">
 <meta property="article:published_time" content="2019-02-08T18:30:45.000Z">
-<meta property="article:modified_time" content="2026-09-19T04:14:32.025Z">
+<meta property="article:modified_time" content="2026-09-19T07:21:15.665Z">
 <meta property="article:author" content="Harrison Chen">
 <meta property="article:tag" content="Basic">
 <meta property="article:tag" content="Camera">
@@ -85,7 +85,7 @@
 
   
 
-  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","display_overflow":"scroll","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-mml-chtml.js","integrity":"sha256-ihPtDDm7pTmSF9ViEsItlvsrBTsNkz0MOXMchzOwCQw="}}</script>
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","display_overflow":"scroll","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-mml-chtml.js","integrity":"sha256-ihPtDDm7pTmSF9ViEsItlvsrBTsNkz0MOXMchzOwCQw="}}</script>
 <script src="/js/third-party/math/mathjax.js" defer></script>
 
 
@@ -101,7 +101,7 @@
     "@id": "https://blog.harrison-chen.dev/2019/02/08/Game%20Implementations/Multiplayer%20Camera/"
   },
   "datePublished": "2019-02-08T18:30:45.000Z",
-  "dateModified": "2026-09-19T04:14:32.025Z",
+  "dateModified": "2026-09-19T07:21:15.665Z",
   "inLanguage": "zh-TW",
   "description": "You can also see my post in Bahamut.\n最近在開發2D遊戲攝影機的時候，參考到一篇2D攝影機設計經典文章\n就是2015年的這篇 Scroll Back - 2D 捲軸遊戲的攝影機理論與實務\n其中有提到，在多人操作的時候，會希望攝影機能照到所有角色，這篇就將討論如何實做這件事。",
   "author": {
@@ -119,11 +119,7 @@
   <noscript>
     <link rel="stylesheet" href="/css/noscript.css">
   </noscript>
-<!-- hexo injector head_end start -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
-<link rel="alternate" type="application/atom+xml" href="/notes/atom.xml" title="Haox Land - Article Selection Feed"><!-- hexo injector head_end end --></head>
+<!-- hexo injector head_end start --><link rel="alternate" type="application/atom+xml" href="/notes/atom.xml" title="Haox Land - Article Selection Feed"><!-- hexo injector head_end end --></head>
 
 <body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
   <div class="headband"></div>
@@ -307,7 +303,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2026-09-19 12:14:32" itemprop="dateModified" datetime="2026-09-19T12:14:32+08:00">2026-09-19</time>
+      <time title="修改時間：2026-09-19 15:21:15" itemprop="dateModified" datetime="2026-09-19T15:21:15+08:00">2026-09-19</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -327,20 +323,6 @@
       <span class="post-meta-item-text">閱讀次數：</span>
       <span id="busuanzi_value_page_pv"></span>
     </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2019/02/08/Game%20Implementations/Multiplayer%20Camera/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="/2019/02/08/Game Implementations/Multiplayer Camera/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
 </div>
 
         </div>
@@ -499,7 +481,7 @@
 <noscript>
   <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
 </noscript>
-<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"harrison0628","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"harrison0628","count":false,"i18n":{"disqus":"disqus"}}</script>
 <script src="/js/third-party/comments/disqus.js" defer></script>
 
 </body>

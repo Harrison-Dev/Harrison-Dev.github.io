@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.harrison-chen.dev","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.29.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":true}}</script><script src="/js/config.js" defer></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.harrison-chen.dev","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.29.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":"mac"},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":100,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
 
     <meta name="description" content="You can also see this article in my medium post.  我在接觸3D遊戲引擎時，一開始對旋轉這件事感到很困擾， 在Unity的編輯器中，旋轉的表現形式看起來像三個顏色的球狀旋轉。在Transform裡面又是有著3個數字的向量形式，到了程式碼裡面，又變成Quaternion這種資料形式，讓人一時之間很難搞懂。 這篇文章會記錄一些我對於旋轉的表示方法、各種表">
 <meta property="og:type" content="article">
@@ -33,7 +33,7 @@
 <meta property="og:image" content="https://miro.medium.com/max/1256/1*IvRdP5jY-Elhi9SRkau_2Q.png">
 <meta property="og:image" content="https://miro.medium.com/max/1284/1*403W_CTHQcSLWwk_oI6EVg.png">
 <meta property="article:published_time" content="2019-11-01T04:00:00.000Z">
-<meta property="article:modified_time" content="2026-09-19T04:14:32.025Z">
+<meta property="article:modified_time" content="2026-09-19T07:21:15.665Z">
 <meta property="article:author" content="Harrison Chen">
 <meta property="article:tag" content="Basic">
 <meta property="article:tag" content="Game Math">
@@ -99,7 +99,7 @@
     "@id": "https://blog.harrison-chen.dev/2019/11/01/Game%20Mathematics/Introduction%20to%20Game%20Rotation/"
   },
   "datePublished": "2019-11-01T04:00:00.000Z",
-  "dateModified": "2026-09-19T04:14:32.025Z",
+  "dateModified": "2026-09-19T07:21:15.665Z",
   "inLanguage": "zh-TW",
   "description": "You can also see this article in my medium...",
   "author": {
@@ -117,11 +117,7 @@
   <noscript>
     <link rel="stylesheet" href="/css/noscript.css">
   </noscript>
-<!-- hexo injector head_end start -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
-<link rel="alternate" type="application/atom+xml" href="/notes/atom.xml" title="Haox Land - Article Selection Feed"><!-- hexo injector head_end end --></head>
+<!-- hexo injector head_end start --><link rel="alternate" type="application/atom+xml" href="/notes/atom.xml" title="Haox Land - Article Selection Feed"><!-- hexo injector head_end end --></head>
 
 <body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
   <div class="headband"></div>
@@ -305,7 +301,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新於</span>
-      <time title="修改時間：2026-09-19 12:14:32" itemprop="dateModified" datetime="2026-09-19T12:14:32+08:00">2026-09-19</time>
+      <time title="修改時間：2026-09-19 15:21:15" itemprop="dateModified" datetime="2026-09-19T15:21:15+08:00">2026-09-19</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -325,20 +321,6 @@
       <span class="post-meta-item-text">閱讀次數：</span>
       <span id="busuanzi_value_page_pv"></span>
     </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2019/11/01/Game%20Mathematics/Introduction%20to%20Game%20Rotation/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="/2019/11/01/Game Mathematics/Introduction to Game Rotation/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
 </div>
 
         </div>
@@ -542,7 +524,7 @@ Amazon : <a target="_blank" rel="noopener" href="https://www.amazon.com/Math-Pri
 <noscript>
   <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
 </noscript>
-<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"harrison0628","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"harrison0628","count":false,"i18n":{"disqus":"disqus"}}</script>
 <script src="/js/third-party/comments/disqus.js" defer></script>
 
 </body>

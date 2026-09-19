@@ -65,15 +65,6 @@
   </url>
   
   <url>
-    <loc>https://blog.harrison-chen.dev/2019/11/01/Game%20Mathematics/Introduction%20to%20Game%20Rotation/</loc>
-    
-    <lastmod>2026-09-19</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://blog.harrison-chen.dev/2020/04/18/Game%20Implementations/UniAvatar_Intro/</loc>
     
     <lastmod>2026-09-19</lastmod>
@@ -83,7 +74,7 @@
   </url>
   
   <url>
-    <loc>https://blog.harrison-chen.dev/2020/02/25/Game%20Physics/2D%20Collision%20Detection/</loc>
+    <loc>https://blog.harrison-chen.dev/2020/04/25/Game%20Physics/Physics%20Constraint/</loc>
     
     <lastmod>2026-09-19</lastmod>
     
@@ -92,7 +83,25 @@
   </url>
   
   <url>
-    <loc>https://blog.harrison-chen.dev/2020/04/25/Game%20Physics/Physics%20Constraint/</loc>
+    <loc>https://blog.harrison-chen.dev/2023/09/10/Travel/%E4%BA%AC%E9%83%BDBitSummit%E9%81%8A%E8%A8%98/</loc>
+    
+    <lastmod>2026-09-19</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.harrison-chen.dev/2019/11/01/Game%20Mathematics/Introduction%20to%20Game%20Rotation/</loc>
+    
+    <lastmod>2026-09-19</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.harrison-chen.dev/2020/02/25/Game%20Physics/2D%20Collision%20Detection/</loc>
     
     <lastmod>2026-09-19</lastmod>
     
@@ -119,7 +128,7 @@
   </url>
   
   <url>
-    <loc>https://blog.harrison-chen.dev/2023/09/10/Travel/%E4%BA%AC%E9%83%BDBitSummit%E9%81%8A%E8%A8%98/</loc>
+    <loc>https://blog.harrison-chen.dev/2022/07/27/Game%20Programming/Fiber%20Job%20System/</loc>
     
     <lastmod>2026-09-19</lastmod>
     
@@ -129,15 +138,6 @@
   
   <url>
     <loc>https://blog.harrison-chen.dev/2021/09/05/Unity/UniTask/</loc>
-    
-    <lastmod>2026-09-19</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.harrison-chen.dev/2022/07/27/Game%20Programming/Fiber%20Job%20System/</loc>
     
     <lastmod>2026-09-19</lastmod>
     
@@ -236,7 +236,7 @@
   </url>
   
   <url>
-    <loc>https://blog.harrison-chen.dev/notes/good-student-action-guide-vincent-yu/index.html</loc>
+    <loc>https://blog.harrison-chen.dev/notes/cygames-facial-animation-interview/index.html</loc>
     
     <lastmod>2026-01-17</lastmod>
     
@@ -245,7 +245,7 @@
   </url>
   
   <url>
-    <loc>https://blog.harrison-chen.dev/notes/cygames-facial-animation-interview/index.html</loc>
+    <loc>https://blog.harrison-chen.dev/notes/good-student-action-guide-vincent-yu/index.html</loc>
     
     <lastmod>2026-01-17</lastmod>
     
@@ -326,14 +326,21 @@
   </url>
   
   <url>
-    <loc>https://blog.harrison-chen.dev/tags/Game-Math/</loc>
+    <loc>https://blog.harrison-chen.dev/tags/Game-Physics/</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://blog.harrison-chen.dev/tags/Game-Physics/</loc>
+    <loc>https://blog.harrison-chen.dev/tags/game-development/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.harrison-chen.dev/tags/Game-Math/</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -368,7 +375,14 @@
   </url>
   
   <url>
-    <loc>https://blog.harrison-chen.dev/tags/game-development/</loc>
+    <loc>https://blog.harrison-chen.dev/tags/Operating-System/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.harrison-chen.dev/tags/C/</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -383,20 +397,6 @@
   
   <url>
     <loc>https://blog.harrison-chen.dev/tags/Programming-Tips/</loc>
-    <lastmod>2026-09-19</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.harrison-chen.dev/tags/Operating-System/</loc>
-    <lastmod>2026-09-19</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.harrison-chen.dev/tags/C/</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -419,13 +419,6 @@
   </url>
   
   <url>
-    <loc>https://blog.harrison-chen.dev/categories/Game-Mathematics/</loc>
-    <lastmod>2026-09-19</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://blog.harrison-chen.dev/categories/Game-Physics/</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>weekly</changefreq>
@@ -433,14 +426,21 @@
   </url>
   
   <url>
-    <loc>https://blog.harrison-chen.dev/categories/Game-Programming/</loc>
+    <loc>https://blog.harrison-chen.dev/categories/travel/</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://blog.harrison-chen.dev/categories/travel/</loc>
+    <loc>https://blog.harrison-chen.dev/categories/Game-Mathematics/</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.harrison-chen.dev/categories/Game-Programming/</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
